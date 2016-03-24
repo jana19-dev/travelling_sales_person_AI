@@ -15,6 +15,10 @@ class Node():
         self.is_start = False
         self.is_visited = False
         
+    def get_city_details(self):
+        ''' Return a tuple representing the city with all its properties'''
+        return (self.name, self.position, is_start, is_visited)
+    
     
 ########################################################
 #   Additional functions to work with Nodes     #
@@ -57,38 +61,70 @@ tsp STATESPACE
 
 
 class tsp(StateSpace):
-    def __init__(self, cities, action, gval, parent=None):
+    def __init__(self, curr_city, cities, action, gval, parent=None):
         """Initialize a tsp search state object."""
         StateSpace.__init__(self, action, gval, parent)
+        self.curr_city = curr_city
         self.cities = cities    # cities = [node1, node2, ... nodek]
         
 
     def successors(self):
         '''Return list of tsp objects that are the successors of the current object'''
-        pass
+        States = []
+        current_city = self.curr_city
+        
+        current_index = 0
+        for city in self.cities:
+            if city != current_city:
+                new_gval = self.gval + dist_Euclidean(current_city, city)
+                new_cities = deepcopy(self.cities)
+                new_cities[current_index].is_visited = True
+                States.append(tsp(city, new_cities, 'Move to {}'.format(city.name), new_gval, self))
+            
+            current_index += 1
+            
+        return States        
         
         
     def hashable_state(self):
         '''Return a data item that can be used as a dictionary key to UNIQUELY represent the state.'''
-        pass
-
+        hash_list = []
+        for city in self.cities:
+            hash_list.append(city.get_city_details())
+            
+        return tuple(hash_list)
+        
 
     def print_state(self):
         if self.parent:
             print("Action= \"{}\", S{}, g-value = {}, (From S{})".format(self.action, self.index, self.gval, self.parent.index))
         else:
             print("Action= \"{}\", S{}, g-value = {}, (Initial State)".format(self.action, self.index, self.gval))
-            
-        print ('')
-        
+                   
         for city in self.cities:
             print ('Name={}\tPosition={}\tVisited={}\tStart={}'.format(city.name, city.position, city.is_visited, city.is_start))        
 
+        print ('')
+
+
+
+#############################################
+# Goal Function and Initialization          #
+#############################################
 
 
 def tsp_goal_fn(state):
     '''Have we reached a goal state'''
-    pass
+    # Check if we're back at the start city
+    if not (state.curr_city).is_start:
+        return False
+    else:
+        goal = True
+        for city in state.cities:
+            if not city.is_visited:
+                goal = False
+                break
+        return goal
 
 
 def make_init_state(cities, start_city):
@@ -115,7 +151,9 @@ def make_init_state(cities, start_city):
         
         i += 1
     
-    return tsp(all_cities, "START", 0)
+    curr_city = all_cities[0]   # set the current city as the start_city
+    return tsp(curr_city, all_cities, "START", 0)
+
 
 
 #############################################
