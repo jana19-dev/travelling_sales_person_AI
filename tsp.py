@@ -1,12 +1,55 @@
+from search import *
+from random import randint
+from copy import deepcopy
+import math
+
+
+'''
+a Node Class to represent a city
+'''
+
+class Node():
+    def __init__(self, name, position, is_start=False):
+        self.name = name
+        self.position = position    # position = (x, y) coordinates 
+        self.is_start = is_start
+        self.is_visited = False
+        
+    
+    
+########################################################
+#   Additional functions to work with Nodes     #
+########################################################
+
+
+def dist_Euclidean(node1, node2):
+    '''Compute the Euclidean distance between two nodes.'''
+
+    # The two points are located on coordinates (x1,y1) and (x2,y2)
+    (x1,y1) = node1.position
+    (x2,y2) = node2.position
+    
+    xdiff = x2 - x1
+    ydiff = y2 - y1
+    
+    return int(math.sqrt(xdiff*xdiff + ydiff*ydiff))
+
+
+def dist_Manhattan(node1, node2):
+    '''Compute the Manhattan distance between two nodes.'''
+
+    # The two points are located on coordinates (x1,y1) and (x2,y2)
+    (x1,y1) = node1.position
+    (x2,y2) = node2.position
+    
+    return int(abs(x2-x1) + abs(y2-y1))
+
+
+
 
 '''
 tsp STATESPACE
 '''
-
-
-from search import *
-from random import randint
-from copy import deepcopy
 
 ##################################################
 # The search space class 'tsp'             #
@@ -15,11 +58,11 @@ from copy import deepcopy
 
 
 class tsp(StateSpace):
-    def __init__(self, action, gval, parent=None):
+    def __init__(self, cities, action, gval, parent=None):
         """Initialize a tsp search state object."""
         StateSpace.__init__(self, action, gval, parent)
-        pass
-
+        self.cities = cities    # cities = [node1, node2, ... nodek]
+        
 
     def successors(self):
         '''Return list of tsp objects that are the successors of the current object'''
@@ -32,8 +75,15 @@ class tsp(StateSpace):
 
 
     def print_state(self):
-
-        pass
+        if self.parent:
+            print("Action= \"{}\", S{}, g-value = {}, (From S{})".format(self.action, self.index, self.gval, self.parent.index))
+        else:
+            print("Action= \"{}\", S{}, g-value = {}, (Initial State)".format(self.action, self.index, self.gval))
+            
+        print ('')
+        
+        for city in self.cities:
+            print ('Name={}\tPosition={}\tVisited={}\tStart={}'.format(city.name, city.position, city.is_visited, city.is_start))        
 
 
 
@@ -42,11 +92,16 @@ def tsp_goal_fn(state):
     pass
 
 
-def make_init_state():
+def make_init_state(cities):
     '''Input the following items which specify a state and return a tsp object
        representing this initial state.
+       Input : cities = [(name, x, y), (name, x ,y) ... ]
+               where name is the city's name and x,y are its coordinates
     '''
-    pass
+    all_cities = [Node(city[0], (city[1],city[2])) for city in cities]
+    # city[0] = name, city[1] = x-coordinate, city[2] = y-coordinate
+    
+    return tsp(all_cities, "START", 0)
 
 
 #############################################
@@ -60,15 +115,15 @@ def heur_zero(state):
 
 
 def heur_distance_to_nearest_neighbour(state):
-	pass
+    pass
 
 
 def heur_MST(state):
-	pass
+    pass
 
 
 def heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state):
-	pass	
+    pass    
 
 
 ########################################################
@@ -77,10 +132,26 @@ def heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state):
 ########################################################
 
 
-def get_tsp_status():
-	pass
-
-
-def make_rand_init_state():
-    '''Generate a random initial state containing'''
-    pass
+def make_rand_init_state(n, x_max, y_max):
+    '''Generate a random initial state containing 'n' number of cities, all 
+       within the range from (0,0) to (x_max, y_max) coordinates.'''
+    
+    cities_list = []
+    coordinates_taken = []
+    
+    for i in range(n):
+        name = 'City{}'.format(i+1)
+        conflict = True
+        
+        while conflict:  
+            x = randint(0, x_max - 1)
+            y = randint(0, y_max - 1)
+            conflict = False
+            if (x,y) in coordinates_taken:
+                conflict = True
+                
+        coordinates_taken.append((x,y))
+        new_city = (name, x, y)
+        cities_list.append(new_city)
+    
+    return make_init_state(cities_list)
