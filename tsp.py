@@ -92,6 +92,8 @@ class tsp(StateSpace):
         for city in self.cities:
             hash_list.append(city.get_city_details())
             
+        hash_list.insert(0, self.curr_city) 
+        
         return tuple(hash_list)
         
 
