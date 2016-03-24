@@ -16,7 +16,6 @@ class Node():
         self.is_visited = False
         
     
-    
 ########################################################
 #   Additional functions to work with Nodes     #
 ########################################################
@@ -92,14 +91,29 @@ def tsp_goal_fn(state):
     pass
 
 
-def make_init_state(cities):
+def make_init_state(cities, start_city):
     '''Input the following items which specify a state and return a tsp object
        representing this initial state.
        Input : cities = [(name, x, y), (name, x ,y) ... ]
                where name is the city's name and x,y are its coordinates
     '''
-    all_cities = [Node(city[0], (city[1],city[2])) for city in cities]
-    # city[0] = name, city[1] = x-coordinate, city[2] = y-coordinate
+    i = 1
+    all_cities = []
+    for city in cities:
+        name = city[0]
+        x = city[1]
+        y = city[2]
+        
+        new_city = Node(name, (x, y))
+        
+        # append the start city at the front of the list
+        if i == start_city:
+            new_city.is_start = True
+            all_cities.insert(0,new_city)
+        else:
+            all_cities.append(new_city)
+        
+        i += 1
     
     return tsp(all_cities, "START", 0)
 
@@ -134,7 +148,8 @@ def heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state):
 
 def make_rand_init_state(n, x_max, y_max):
     '''Generate a random initial state containing 'n' number of cities, all 
-       within the range from (0,0) to (x_max, y_max) coordinates.'''
+       within the range from (0,0) to (x_max, y_max) coordinates.
+       start = the number of the city in the range which we start the TSP'''
     
     cities_list = []
     coordinates_taken = []
@@ -154,4 +169,6 @@ def make_rand_init_state(n, x_max, y_max):
         new_city = (name, x, y)
         cities_list.append(new_city)
     
-    return make_init_state(cities_list)
+    start_city = randint(1, n)
+    
+    return make_init_state(cities_list, start_city)
