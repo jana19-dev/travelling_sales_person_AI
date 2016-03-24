@@ -9,10 +9,10 @@ a Node Class to represent a city
 '''
 
 class Node():
-    def __init__(self, name, position, is_start=False):
+    def __init__(self, name, position):
         self.name = name
         self.position = position    # position = (x, y) coordinates 
-        self.is_start = is_start
+        self.is_start = False
         self.is_visited = False
         
     
