@@ -2,6 +2,7 @@ from search import *
 from random import randint
 from copy import deepcopy
 import math
+import turtle
 
 
 '''
@@ -199,8 +200,8 @@ def make_rand_init_state(n, x_max, y_max):
         conflict = True
         
         while conflict:  
-            x = randint(0, x_max - 1)
-            y = randint(0, y_max - 1)
+            x = randint(1 - x_max , x_max - 1)
+            y = randint(1 - y_max , y_max - 1)
             conflict = False
             if (x,y) in coordinates_taken:
                 conflict = True
@@ -212,3 +213,48 @@ def make_rand_init_state(n, x_max, y_max):
     start_city = randint(1, n)
     
     return make_init_state(cities_list, start_city)
+
+
+
+
+def draw_canvas(state):
+    '''Draw all the cities in the current state in a canvas. Indicate the start
+       city with a description and the current city by the turtle pointer head
+    '''
+    turtle.clear()
+    turtle.up()
+
+    current_city = state.curr_city
+    for city in state.cities:
+        x = city.position[0]
+        y = city.position[1]
+        turtle.goto(x, y)
+        if city.is_start:
+            turtle.write('{}, Start'.format(city.name), align="center", font=("Arial", 12, "bold"))
+        else:
+            turtle.write('{}'.format(city.name), align="center", font=("Arial", 12, "bold"))
+    
+    turtle.goto(current_city.position[0], current_city.position[1])
+    
+    
+def draw_final_path(cities):
+    '''Draw the TSP path given the cities in the correct order'''
+    turtle.clear()
+    turtle.up()
+    
+    start_city = ''
+    i = 0
+    for city in cities:
+        x = city.position[0]
+        y = city.position[1]
+        turtle.goto(x, y)
+        turtle.pencolor("red")
+        if city.is_start:
+            turtle.write('{}, Start'.format(city.name), align="center", font=("Arial", 12, "bold"))
+            start_city = city
+        else:
+            turtle.write('{}'.format(city.name), align="center",  font=("Arial", 12, "bold"))
+        turtle.pencolor("black")
+        turtle.down()
+    
+    turtle.goto(start_city.position[0], start_city.position[1])    
