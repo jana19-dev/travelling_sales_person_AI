@@ -79,8 +79,11 @@ class tsp(StateSpace):
             if city != current_city:
                 new_gval = self.gval + dist_Euclidean(current_city, city)
                 new_cities = deepcopy(self.cities)
-                new_cities[current_index].is_visited = True
-                States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(city.name), new_gval, self))
+                curr_city = new_cities[current_index]
+                curr_city.is_visited = True
+                del new_cities[current_index]
+                new_cities.insert(0, curr_city)
+                States.append(tsp(curr_city, new_cities, 'Move to {}'.format(city.name), new_gval, self))
             
             current_index += 1
             
@@ -232,8 +235,7 @@ def draw_canvas(state):
         x = city.position[0]
         y = city.position[1]
         turtle.goto(x, y)
-  
-            
+             
         if city.is_start:
             turtle.write('{}, Start'.format(city.name), align="center", font=("Arial", 12, "bold"))
         elif city == current_city:
@@ -241,21 +243,24 @@ def draw_canvas(state):
         else:
             turtle.write('{}'.format(city.name), align="center", font=("Arial", 12, "bold"))
  
-            
     turtle.goto(current_city.position[0], current_city.position[1])
     
     
     
     
-def draw_final_path(cities):
+def draw_final_path(state):
     '''Draw the TSP path given the cities in the correct order'''
+    
+    start_city = state.cities[0]
+    cities = state.cities[1:]
+    cities = [i for i in reversed(cities)]
+    cities.insert(0, start_city)
+    
     turtle.clear()
     turtle.hideturtle()
     turtle.up()
     turtle.pensize(1)
     
-    start_city = ''
-    i = 0
     for city in cities:
         x = city.position[0]
         y = city.position[1]
@@ -265,7 +270,6 @@ def draw_final_path(cities):
         
         if city.is_start:
             turtle.write('{}-Start'.format(city.name), align="center", font=("Arial", 11, "bold"))
-            start_city = city
         else:
             turtle.write('{}'.format(city.name), align="center",  font=("Arial", 11, "bold"))
         
@@ -273,3 +277,11 @@ def draw_final_path(cities):
         
     turtle.pencolor("red")
     turtle.goto(start_city.position[0], start_city.position[1])    
+
+
+def get_city_list(state):
+    '''Return [(node1, x, y), (node2, x, y)...]'''
+    cities = []
+    for city in state.cities:
+        cities.append((city.name, city.position[0], city.position[1]))
+    return cities
