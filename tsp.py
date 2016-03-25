@@ -191,14 +191,14 @@ def make_rand_init_state(n):
     '''Generate a random initial state containing 'n' number of cities'''
     
     # set the max width and height of the 2d space
-    x_max = 400
-    y_max = 400
+    x_max = 420
+    y_max = 380
     
     cities_list = []
     coordinates_taken = []
     
     for i in range(n):
-        name = 'City{}'.format(i+1)
+        name = '{}'.format(i+1)
         conflict = True
         
         while conflict:  
@@ -244,21 +244,24 @@ def draw_final_path(cities):
     '''Draw the TSP path given the cities in the correct order'''
     turtle.clear()
     turtle.up()
-    turtle.pensize(2)
+    turtle.pensize(1)
     
     start_city = ''
     i = 0
     for city in cities:
         x = city.position[0]
         y = city.position[1]
-        turtle.goto(x, y)
         turtle.pencolor("red")
+        turtle.goto(x, y)
+        turtle.pencolor("black")
+        
         if city.is_start:
-            turtle.write('{}, Start'.format(city.name), align="center", font=("Arial", 13, "bold"))
+            turtle.write('{}-Start'.format(city.name), align="center", font=("Arial", 13, "bold"))
             start_city = city
         else:
             turtle.write('{}'.format(city.name), align="center",  font=("Arial", 13, "bold"))
-        turtle.pencolor("black")
+        
         turtle.down()
-    
+        
+    turtle.pencolor("red")
     turtle.goto(start_city.position[0], start_city.position[1])    
