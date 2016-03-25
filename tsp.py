@@ -187,10 +187,13 @@ def heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state):
 ########################################################
 
 
-def make_rand_init_state(n, x_max, y_max):
-    '''Generate a random initial state containing 'n' number of cities, all 
-       within the range from (0,0) to (x_max, y_max) coordinates.
+def make_rand_init_state(n):
+    '''Generate a random initial state containing 'n' number of cities
        start = the number of the city in the range which we start the TSP'''
+    
+    # set the max width and height of the 2d space
+    x_max = 400
+    y_max = 400
     
     cities_list = []
     coordinates_taken = []
@@ -216,7 +219,6 @@ def make_rand_init_state(n, x_max, y_max):
 
 
 
-
 def draw_canvas(state):
     '''Draw all the cities in the current state in a canvas. Indicate the start
        city with a description and the current city by the turtle pointer head
@@ -237,10 +239,12 @@ def draw_canvas(state):
     turtle.goto(current_city.position[0], current_city.position[1])
     
     
+    
 def draw_final_path(cities):
     '''Draw the TSP path given the cities in the correct order'''
     turtle.clear()
     turtle.up()
+    turtle.pensize(2)
     
     start_city = ''
     i = 0
@@ -250,10 +254,10 @@ def draw_final_path(cities):
         turtle.goto(x, y)
         turtle.pencolor("red")
         if city.is_start:
-            turtle.write('{}, Start'.format(city.name), align="center", font=("Arial", 12, "bold"))
+            turtle.write('{}, Start'.format(city.name), align="center", font=("Arial", 13, "bold"))
             start_city = city
         else:
-            turtle.write('{}'.format(city.name), align="center",  font=("Arial", 12, "bold"))
+            turtle.write('{}'.format(city.name), align="center",  font=("Arial", 13, "bold"))
         turtle.pencolor("black")
         turtle.down()
     
