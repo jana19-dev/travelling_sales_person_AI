@@ -188,8 +188,7 @@ def heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state):
 
 
 def make_rand_init_state(n):
-    '''Generate a random initial state containing 'n' number of cities
-       start = the number of the city in the range which we start the TSP'''
+    '''Generate a random initial state containing 'n' number of cities'''
     
     # set the max width and height of the 2d space
     x_max = 400
@@ -213,6 +212,7 @@ def make_rand_init_state(n):
         new_city = (name, x, y)
         cities_list.append(new_city)
     
+    # choose a starting point at random 
     start_city = randint(1, n)
     
     return make_init_state(cities_list, start_city)
