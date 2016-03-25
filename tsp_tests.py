@@ -113,7 +113,7 @@ if __name__ == '__main__':
     
     se = SearchEngine('astar', 'full')
     #se.trace_on(2)
-    #final = se.search(s10, tsp_goal_fn, heur_zero)
+    #final = se.search(s10, tsp_goal_fn, h1)
     #draw_final_path(final)
     
     

@@ -172,16 +172,27 @@ def heur_zero(state):
     return 0
 
 
-def heur_distance_to_nearest_neighbour(state):
+def heur_distance_to_nearest_unvisited_neighbour(state):
+    '''Distance to the nearest unvisited neighbour from the current city'''
     pass
 
 
 def heur_MST(state):
+    '''Estimated distance to travel all the unvisited nodes'''
     pass
 
 
 def heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state):
-    pass    
+    '''Nearest distance from an unvisited city to the start city'''
+    pass
+
+
+def h1(state):
+    '''The actual heuristic'''
+    return (heur_distance_to_nearest_unvisited_neighbour(state)
+            +heur_MST(state)
+            +heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state))
+
 
 
 ########################################################
