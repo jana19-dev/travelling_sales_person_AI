@@ -1,26 +1,6 @@
 from tsp import *
 
 
-def get_worst_cost(state):
-    '''Starting from the start_city, travel to each city in the list one by one
-       and come back to the start_city. Follow a polygon path. 
-       This cost will be the UPPER BOUND on the minimum TSP cost.
-    '''
-    distances = []
-    cities = deepcopy(state.cities)
-    start_city = state.cities[0]
-    while cities:
-        curr_city = cities[0]
-        next_city = cities[1]
-        distances.append(dist_Euclidean(curr_city, next_city))
-        del cities[0]
-        if len(cities) == 1:
-            # go back to the start city
-            distances.append(dist_Euclidean(cities[0], start_city))
-            break
-    return sum(distances)
-
-
 def test_successors(s):
     s.print_state()
     
@@ -46,109 +26,97 @@ def goal_check(s):
     
 def test_DFS_none(state):
     '''Depth first with no cycle checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'depth_first', cc_level = 'none')
     print("=========Test. Depth first with no cycle checking==========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)    
     
     
 def test_DFS_path(state):
     '''Depth first with only path checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'depth_first', cc_level = 'path')
     print("=========Test. Depth first with only path checking==========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)    
 
 
 def test_DFS_full(state):
     '''Depth first with full cycle checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'depth_first', cc_level = 'full')
     print("=========Test. Depth first with full cycle checking=========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
     
     
 def test_BFS_none(state):
     '''Breadth first with no cycle checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'breadth_first', cc_level = 'none')
     print("=========Test. Breadth first with no cycle checking==========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
 
 
 def test_BFS_path(state):
     '''Breadth first with only path checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'breadth_first', cc_level = 'path')
     print("=========Test. Breadth first with only path checking==========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
 
 
 def test_BFS_full(state):
     '''Breadth first with full cycle checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'breadth_first', cc_level = 'full')
     print("=========Test. Breadth first with full cycle checking=========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
 
 
 def test_UCS_none(state):
     '''Uniform Cost with no cycle checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'astar', cc_level = 'none')
     print("=========Test. Uniform Cost with no cycle checking==========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
     
 
 def test_UCS_path(state):
     '''Uniform Cost with only path checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'astar', cc_level = 'path')
     print("=========Test. Uniform Cost with only path checking==========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
 
 
 def test_UCS_full(state):
     '''Uniform Cost with full cycle checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)    
     se = SearchEngine(strategy = 'astar', cc_level = 'full')
     print("=========Test. Uniform Cost with full cycle checking==========")
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST)
+    final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
 
 
 def test_Astar_none(state, heur_func):
     '''A* with no cycle checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)    
     se = SearchEngine(strategy = 'astar', cc_level = 'none')
     print("=========Test. A* with no cycle checking==========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST, heur_func)
+    final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
     
     
 def test_Astar_path(state, heur_func):
     '''A* with only path checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)
     se = SearchEngine(strategy = 'astar', cc_level = 'path')
     print("=========Test. A* with only path checking==========") 
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST, heur_func)
+    final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
 
 
 def test_Astar_full(state, heur_func):
     '''A* with full cycle checking'''
-    UPPER_BOUND_COST = get_worst_cost(state)    
     se = SearchEngine(strategy = 'astar', cc_level = 'full')
     print("=========Test. A* with full cycle checking==========")
-    final = se.search(state, tsp_goal_fn, UPPER_BOUND_COST, heur_func)
+    final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
 
 

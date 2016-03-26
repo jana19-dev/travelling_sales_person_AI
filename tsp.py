@@ -121,13 +121,11 @@ class tsp(StateSpace):
 #############################################
 
 
-def tsp_goal_fn(state, UPPER_BOUND_COST=float("inf")):
+def tsp_goal_fn(state):
     '''Have we reached a goal state. Make sure its atleast close to optimal
        by comparing the cost with the upper bound cost.'''
     # Check if we're back at the start city
     if not (state.curr_city).is_start:
-        return False
-    elif state.gval > UPPER_BOUND_COST:
         return False
     else:
         goal = True
