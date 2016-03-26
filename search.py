@@ -281,7 +281,7 @@ class SearchEngine:
 
         return rval
 
-    def search(self, initState, goal_fn, heur_fn = _zero_hfn):
+    def search(self, initState, goal_fn, UPPER_BOUND_COST=float("inf"), heur_fn = _zero_hfn):
         #Perform full cycle checking as follows
         #a. check state before inserting into OPEN. If we had already reached
         #   the same state via a cheaper path, don't insert into OPEN.
@@ -314,16 +314,16 @@ class SearchEngine:
         OPEN.insert(node)
 
     ###NOW do the search and return the result
-        goal_node = self.searchOpen(OPEN, goal_fn, heur_fn)
+        goal_node = self.searchOpen(OPEN, goal_fn, UPPER_BOUND_COST, heur_fn)
         if goal_node:
             print("Search Successful!")
             print("   Strategy = '{}'".format(self.get_strategy()))
             print("   Solution cost = {}".format(goal_node.gval))
-            print("   Goal state: ", end="")
-            goal_node.state.print_state()
-            print("----------------------------")
-            print("Solution Path:")
-            goal_node.state.print_path()
+            #print("   Goal state: ", end="")
+            #goal_node.state.print_state()
+            #print("----------------------------")
+            #print("Solution Path:")
+            #goal_node.state.print_path()
             self.total_search_time = os.times()[0] - self.total_search_time
             print("----------------------------")
             print("Search time = {}, nodes expanded = {}, states generated = {}, states cycle check pruned = {}".format(self.total_search_time,sNode.n, StateSpace.n, self.cycle_check_pruned))
@@ -336,7 +336,7 @@ class SearchEngine:
             print("Search time = {}, nodes expanded = {}, states generated = {}, states cycle check pruned = {}".format(self.total_search_time,sNode.n, StateSpace.n, self.cycle_check_pruned))
             return False
 
-    def searchOpen(self, OPEN, goal_fn, heur_fn):
+    def searchOpen(self, OPEN, goal_fn, UPPER_BOUND_COST, heur_fn):
         '''Open has some nodes on it, now search from that state of OPEN'''
 
         #BEGIN TRACING
@@ -356,7 +356,7 @@ class SearchEngine:
                     print("ERROR: Node gval not equal to state gval!")
             #END TRACING
                         
-            if goal_fn(node.state):
+            if goal_fn(node.state, UPPER_BOUND_COST):
                 #node at front of OPEN is a goal...search is completed.
                 return node
 

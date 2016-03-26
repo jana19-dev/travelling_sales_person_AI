@@ -5,6 +5,7 @@ import math
 import turtle
 
 
+
 '''
 a Node Class to represent a city
 '''
@@ -60,8 +61,11 @@ tsp STATESPACE
 # This class is a sub-class of 'StateSpace'      #
 ##################################################
 
+COST_UPPER_BOUND = 0
 
 class tsp(StateSpace):
+    
+    
     def __init__(self, curr_city, cities, action, gval, parent=None):
         """Initialize a tsp search state object."""
         StateSpace.__init__(self, action, gval, parent)
@@ -95,10 +99,8 @@ class tsp(StateSpace):
         hash_list = []
         for city in self.cities:
             hash_list.append(city.get_city_details())
-            
-        hash_list.insert(0, self.curr_city) 
-        
-        return tuple(hash_list)
+                   
+        return tuple(sorted(hash_list))
         
 
     def print_state(self):
@@ -113,16 +115,19 @@ class tsp(StateSpace):
         print ('')
 
 
-
+    
 #############################################
 # Goal Function and Initialization          #
 #############################################
 
 
-def tsp_goal_fn(state):
-    '''Have we reached a goal state'''
+def tsp_goal_fn(state, UPPER_BOUND_COST=float("inf")):
+    '''Have we reached a goal state. Make sure its atleast close to optimal
+       by comparing the cost with the upper bound cost.'''
     # Check if we're back at the start city
     if not (state.curr_city).is_start:
+        return False
+    elif state.gval > UPPER_BOUND_COST:
         return False
     else:
         goal = True
@@ -158,8 +163,9 @@ def make_init_state(cities, start_city):
         i += 1
     
     curr_city = all_cities[0]   # set the current city as the start_city
+    
     return tsp(curr_city, all_cities, "START", 0)
-
+    
 
 
 #############################################
@@ -313,3 +319,6 @@ def get_city_list(state):
     for city in state.cities:
         cities.append((city.name, city.position[0], city.position[1]))
     return cities
+
+
+
