@@ -172,26 +172,43 @@ def heur_zero(state):
     return 0
 
 
-def heur_distance_to_nearest_unvisited_neighbour(state):
-    '''Distance to the nearest unvisited neighbour from the current city'''
+def Euclidean_Next(state):
+    '''The euclidean distance to the nearest unvisited neighbour from the current city'''
     pass
 
 
-def heur_MST(state):
-    '''Estimated distance to travel all the unvisited nodes'''
+def Euclidean_Start(state):
+    '''The minimum euclidean distance from an unvisited city to the start city'''
     pass
 
 
-def heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state):
-    '''Nearest distance from an unvisited city to the start city'''
+def Manhattan_Next(state):
+    '''The manhattan distance to the nearest unvisited neighbour from the current city'''
     pass
 
 
-def h1(state):
-    '''The actual heuristic'''
-    return (heur_distance_to_nearest_unvisited_neighbour(state)
-            +heur_MST(state)
-            +heur_nearest_distance_from_an_unvisited_city_to_the_start_city(state))
+def Manhattan_Start(state):
+    '''The minimum manhattan distance from an unvisited city to the start city'''
+    pass
+
+
+def MST(state):
+    '''Estimated distance to travel all the unvisited nodes starting from the current city'''
+    pass
+
+
+def Euclidean_Next_MST_Euclidean_Start(state):
+    return (  Euclidean_Next(state)
+            + MST(state)
+            + Euclidean_Start(state))
+
+
+def Manhattan_Next_MST_Manhattan_Start(state):
+    return (  Manhattan_Next(state)
+            + MST(state)
+            + Manhattan_Start(state))
+            
+
 
 
 
