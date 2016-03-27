@@ -33,7 +33,6 @@ def test_DFS(state):
     print("=========Test. Depth first with full cycle checking=========") 
     final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
-    return final
     
 
 def test_BFS(state):
@@ -42,7 +41,6 @@ def test_BFS(state):
     print("=========Test. Breadth first with full cycle checking=========") 
     final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
-    return final
 
 
 def test_UCS(state):
@@ -51,7 +49,6 @@ def test_UCS(state):
     print("=========Test. Uniform Cost with full cycle checking==========")
     final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
-    return final
 
 
 def test_Astar(state, heur_func=heur_zero):
@@ -60,7 +57,6 @@ def test_Astar(state, heur_func=heur_zero):
     print("=========Test. A* with full cycle checking==========")
     final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
-    return final
 
 
 def test_Greedy_BFS(state, heur_func=heur_zero):
@@ -69,7 +65,6 @@ def test_Greedy_BFS(state, heur_func=heur_zero):
     print("=========Test. Greedy BFS with full cycle checking==========")
     final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
-    return final
     
     
 def test_IDAstar(state, heur_func=heur_zero):
@@ -78,7 +73,16 @@ def test_IDAstar(state, heur_func=heur_zero):
     print("=========Test. IDA* with full cycle checking==========")
     final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
+
+
+def test_Beam(state, heur_func=heur_zero):
+    '''Beam search with full cycle checking'''
+    se = SearchEngine(strategy = 'beam', cc_level = 'full')
+    print("=========Test. Beam search with full cycle checking==========")
+    final = se.search(state, tsp_goal_fn, heur_func)
+    draw_final_path(final)
     return final
+
 
 
 
@@ -153,3 +157,5 @@ if __name__ == '__main__':
     #test_Greedy_BFS(s5, heur_func)
     
     #test_IDAstar(s5, heur_func)
+    
+    #test_Beam(s5, heur_func)
