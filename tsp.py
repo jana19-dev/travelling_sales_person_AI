@@ -170,48 +170,54 @@ def make_init_state(cities, start_city):
 # heuristics                                #
 #############################################
 
-
 def heur_zero(state):
     '''Zero Heuristic use to make A* search perform uniform cost search'''
     return 0
 
 
-def Euclidean_Next(state):
-    '''The euclidean distance to the nearest unvisited neighbour from the current city'''
-    pass
+def heur_Euclidean(state, DW=False):
+    '''The euclidean distance to the nearest unvisited neighbour from the 
+        current city + The minimum euclidean distance from an unvisited 
+        city (not the current city) to the start city.
+        If DW=True, multiply the result by dynamic_weight(state).'''
+    return 0
 
 
-def Euclidean_Start(state):
-    '''The minimum euclidean distance from an unvisited city to the start city'''
-    pass
+def heur_Manhattan(state, DW=False):
+    '''The manhattan distance to the nearest unvisited neighbour from the 
+       current city + The minimum manhattan distance from an unvisited 
+       city (not the current city) to the start city.
+       If DW=True, multiply the result by dynamic_weight(state).'''
+    return 0
 
 
-def Manhattan_Next(state):
-    '''The manhattan distance to the nearest unvisited neighbour from the current city'''
-    pass
+def heur_MST_Euclidean(state, DW=False):
+    '''Estimated Euclidean distance to travel all the unvisited nodes
+       starting from the current city + heur_Euclidean.
+       If DW=True, multiply the result by dynamic_weight(state).'''
+    return 0
 
 
-def Manhattan_Start(state):
-    '''The minimum manhattan distance from an unvisited city to the start city'''
-    pass
+def heur_MST_Manhattan(state, DW=False):
+    '''Estimated Manhattan distance to travel all the unvisited nodes 
+       starting from the current city + heur_Manhattan.
+       If DW=True, multiply the result by dynamic_weight(state).'''
+    return 0
 
+
+#############################################
+# Helper functions for heuristics           #
+#############################################
 
 def MST(state):
-    '''Estimated distance to travel all the unvisited nodes starting from the current city'''
-    pass
-
-
-def Euclidean_Next_MST_Euclidean_Start(state):
-    return (  Euclidean_Next(state)
-            + MST(state)
-            + Euclidean_Start(state))
-
-
-def Manhattan_Next_MST_Manhattan_Start(state):
-    return (  Manhattan_Next(state)
-            + MST(state)
-            + Manhattan_Start(state))
+    '''Estimated distance to travel all the unvisited nodes starting from 
+       the current city'''
+    return 0
             
+            
+def dynamic_weight(state):
+    '''Return the number of unvisited cities in the current state'''
+    return 0
 
 
 
@@ -261,7 +267,7 @@ def draw_canvas(state):
     turtle.clear()
     turtle.hideturtle()
     turtle.up()
-
+    turtle.pencolor("blue")
     current_city = state.curr_city
     for city in state.cities:
         x = city.position[0]
@@ -282,7 +288,8 @@ def draw_canvas(state):
     
 def draw_final_path(state):
     '''Draw the TSP path given the cities in the correct order'''
-    
+    if not state:
+        return None
     start_city = state.cities[0]
     cities = state.cities[1:]
     cities = [i for i in reversed(cities)]
