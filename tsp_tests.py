@@ -24,47 +24,18 @@ def goal_check(s):
     #return (heur_min_moves(s))
     
     
-def test_DFS_none(state):
-    '''Depth first with no cycle checking'''
-    se = SearchEngine(strategy = 'depth_first', cc_level = 'none')
-    print("=========Test. Depth first with no cycle checking==========") 
-    final = se.search(state, tsp_goal_fn)
-    draw_final_path(final)    
-    
-    
-def test_DFS_path(state):
-    '''Depth first with only path checking'''
-    se = SearchEngine(strategy = 'depth_first', cc_level = 'path')
-    print("=========Test. Depth first with only path checking==========") 
-    final = se.search(state, tsp_goal_fn)
-    draw_final_path(final)    
 
 
-def test_DFS_full(state):
+
+def test_DFS(state):
     '''Depth first with full cycle checking'''
     se = SearchEngine(strategy = 'depth_first', cc_level = 'full')
     print("=========Test. Depth first with full cycle checking=========") 
     final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
     
-    
-def test_BFS_none(state):
-    '''Breadth first with no cycle checking'''
-    se = SearchEngine(strategy = 'breadth_first', cc_level = 'none')
-    print("=========Test. Breadth first with no cycle checking==========") 
-    final = se.search(state, tsp_goal_fn)
-    draw_final_path(final)
 
-
-def test_BFS_path(state):
-    '''Breadth first with only path checking'''
-    se = SearchEngine(strategy = 'breadth_first', cc_level = 'path')
-    print("=========Test. Breadth first with only path checking==========") 
-    final = se.search(state, tsp_goal_fn)
-    draw_final_path(final)
-
-
-def test_BFS_full(state):
+def test_BFS(state):
     '''Breadth first with full cycle checking'''
     se = SearchEngine(strategy = 'breadth_first', cc_level = 'full')
     print("=========Test. Breadth first with full cycle checking=========") 
@@ -72,23 +43,7 @@ def test_BFS_full(state):
     draw_final_path(final)
 
 
-def test_UCS_none(state):
-    '''Uniform Cost with no cycle checking'''
-    se = SearchEngine(strategy = 'astar', cc_level = 'none')
-    print("=========Test. Uniform Cost with no cycle checking==========") 
-    final = se.search(state, tsp_goal_fn)
-    draw_final_path(final)
-    
-
-def test_UCS_path(state):
-    '''Uniform Cost with only path checking'''
-    se = SearchEngine(strategy = 'astar', cc_level = 'path')
-    print("=========Test. Uniform Cost with only path checking==========") 
-    final = se.search(state, tsp_goal_fn)
-    draw_final_path(final)
-
-
-def test_UCS_full(state):
+def test_UCS(state):
     '''Uniform Cost with full cycle checking'''
     se = SearchEngine(strategy = 'astar', cc_level = 'full')
     print("=========Test. Uniform Cost with full cycle checking==========")
@@ -96,23 +51,7 @@ def test_UCS_full(state):
     draw_final_path(final)
 
 
-def test_Astar_none(state, heur_func):
-    '''A* with no cycle checking'''
-    se = SearchEngine(strategy = 'astar', cc_level = 'none')
-    print("=========Test. A* with no cycle checking==========") 
-    final = se.search(state, tsp_goal_fn, heur_func)
-    draw_final_path(final)
-    
-    
-def test_Astar_path(state, heur_func):
-    '''A* with only path checking'''
-    se = SearchEngine(strategy = 'astar', cc_level = 'path')
-    print("=========Test. A* with only path checking==========") 
-    final = se.search(state, tsp_goal_fn, heur_func)
-    draw_final_path(final)
-
-
-def test_Astar_full(state, heur_func):
+def test_Astar(state, heur_func):
     '''A* with full cycle checking'''
     se = SearchEngine(strategy = 'astar', cc_level = 'full')
     print("=========Test. A* with full cycle checking==========")
@@ -120,6 +59,20 @@ def test_Astar_full(state, heur_func):
     draw_final_path(final)
 
 
+def test_Greedy_BFS(state, heur_func):
+    '''Greedy BFS with full cycle checking'''
+    se = SearchEngine(strategy = 'greedy_bfs', cc_level = 'full')
+    print("=========Test. A* with full cycle checking==========")
+    final = se.search(state, tsp_goal_fn, heur_func)
+    draw_final_path(final)
+    
+    
+def test_IDAstar(state, heur_func):
+    '''IDA* with full cycle checking'''
+    se = SearchEngine(strategy = 'ida*', cc_level = 'full')
+    print("=========Test. A* with full cycle checking==========")
+    final = se.search(state, tsp_goal_fn, heur_func)
+    draw_final_path(final)
 
 
 
@@ -169,21 +122,28 @@ if __name__ == '__main__':
     
     #se.trace_on(1)
     
+
+    #test_DFS(s5)
+
+    #test_BFS(s5)
+
+    #test_UCS(s5)
     
     
-    #test_DFS_none(s5)
-    #test_DFS_path(s5)
-    #test_DFS_full(s5)
-    
-    #test_BFS_none(s5)
-    #test_BFS_path(s5)
-    #test_BFS_full(s5)
-    
-    #test_UCS_none(s5)
-    #test_UCS_path(s5)
-    #test_UCS_full(s5)
-    
+    ''' Un-comment only 1 of these to be as a heuristic '''
     #heur_func = None
-    #test_Astar_none(s5, heur_func)
-    #test_Astar_path(s5, heur_func)
-    #test_Astar_full(s5, heur_func)
+    #heur_func = heur_Euclidean(state)
+    #heur_func = heur_Euclidean(state, True)
+    #heur_func = heur_Manhattan(state)
+    #heur_func = heur_Manhattan(state, True)
+    #heur_func = heur_MST_Euclidean(state)
+    #heur_func = heur_MST_Euclidean(state, True)
+    #heur_func = heur_MST_Manhattan(state)
+    #heur_func = heur_MST_Manhattan(state, True)    
+    
+    
+    #test_Astar(s5, heur_func)
+    
+    #test_Greedy_BFS(s5, heur_func)
+    
+    #test_IDAstar(s5, heur_func)
