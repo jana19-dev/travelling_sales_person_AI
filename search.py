@@ -113,6 +113,8 @@ _BREADTH_FIRST = 1
 _BEST_FIRST = 2
 _ASTAR = 3
 _UNIFORM_COST = 4
+_IDA_STAR = 5
+_BEAM = 6
 
 #For best first and astar we use a priority queue. This requires
 #a comparison function for nodes. These constants indicate if we use
@@ -221,6 +223,14 @@ class Open:
             sNode.lt_type = _G
             self.insert = lambda node: heapq.heappush(self.open, node)
             self.extract = lambda: heapq.heappop(self.open)
+        elif search_strategy == _IDA_STAR:    
+            # TO DO
+            pass
+        elif search_strategy == _BEAM:
+            # TO DO
+            pass
+            
+            
 
     def empty(self): return not self.open
 
@@ -254,9 +264,9 @@ class SearchEngine:
         self.trace = 0
 
     def set_strategy(self, s, cc = 'default'):
-        if not s in ['depth_first', 'breadth_first', 'best_first', 'astar', 'ucs']:
+        if not s in ['depth_first', 'breadth_first', 'best_first', 'astar', 'ucs', 'ida*', 'beam']:
             print('Unknown search strategy specified:', s)
-            print("Must be one of 'depth_first', 'breadth_first', 'best_first', or 'astar' or 'ucs'")
+            print("Must be one of 'depth_first', 'breadth_first', 'best_first', or 'astar' or 'ucs' or 'ida*' or 'beam'")
         elif not cc in ['default', 'none', 'path', 'full']:
             print('Unknown cycle check level', cc)
             print( "Must be one of ['default', 'none', 'path', 'full']")
@@ -276,6 +286,8 @@ class SearchEngine:
             elif s == 'best_first'   : self.strategy = _BEST_FIRST
             elif s == 'astar'        : self.strategy = _ASTAR
             elif s == 'ucs'          : self.strategy = _UNIFORM_COST
+            elif s == 'ida*'         : self.strategy = _IDA_STAR
+            elif s == 'beam'         : self.strategy = _BEAM
 
     def get_strategy(self):
         if   self.strategy == _DEPTH_FIRST    : rval = 'depth_first'
@@ -283,6 +295,8 @@ class SearchEngine:
         elif self.strategy == _BEST_FIRST     : rval = 'best_first' 
         elif self.strategy == _ASTAR          : rval = 'astar'
         elif self.strategy == _UNIFORM_COST   : rval = 'ucs'
+        elif self.strategy == _IDA_STAR       : rval = 'ida*'
+        elif self.strategy == _BEAM           : rval = 'beam'
 
         rval = rval + ' with '
 
