@@ -260,7 +260,7 @@ def draw_canvas(state):
     turtle.hideturtle()
     turtle.up()
     turtle.pencolor("blue")
-    current_city = [city for city in state.cities if city.is_current][0]
+    current_city = state.current_city
     for city in state.cities:
         x = city.position[0]
         y = city.position[1]
@@ -289,7 +289,6 @@ def draw_final_path(state):
         state = state.parent    
 
     cities = [state.current_city for state in states]
-    
     rest = deepcopy(cities)
     rest = rest[1:]
     rest.reverse()
