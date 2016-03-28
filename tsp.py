@@ -77,7 +77,7 @@ class tsp(StateSpace):
         States = []
         current_city = self.current_city
         for city in self.cities:
-            if current_city != city:
+            if current_city != city and not city.is_visited:
                 new_gval = self.gval + dist_Euclidean(current_city, city)
                 new_cities = deepcopy(self.cities)
                 current_index = self.cities.index(city)
