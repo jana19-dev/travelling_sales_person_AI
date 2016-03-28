@@ -16,11 +16,10 @@ class Node():
         self.position = position    # position = (x, y) coordinates 
         self.is_start = False
         self.is_visited = False
-        self.is_current = False
         
     def get_city_details(self):
         ''' Return a tuple representing the city with all its properties'''
-        return (self.name, self.position, self.is_start, self.is_visited, self.is_current)
+        return (self.name, self.position, self.is_start, self.is_visited)
     
     
 ########################################################
@@ -66,26 +65,24 @@ tsp STATESPACE
 class tsp(StateSpace):
     
     
-    def __init__(self, cities, action, gval, parent=None):
+    def __init__(self, current_city, cities, action, gval, parent=None):
         """Initialize a tsp search state object."""
         StateSpace.__init__(self, action, gval, parent)
         self.cities = cities    # cities = [node1, node2, ... nodek]
+        self.current_city = current_city
         
 
     def successors(self):
         '''Return list of tsp objects that are the successors of the current object'''
         States = []
-        current_city = [city for city in self.cities if city.is_current][0]
+        current_city = self.current_city
         for city in self.cities:
-            if not city.is_current:
+            if current_city != city:
                 new_gval = self.gval + dist_Euclidean(current_city, city)
                 new_cities = deepcopy(self.cities)
                 current_index = self.cities.index(city)
                 new_cities[current_index].is_visited = True
-                new_cities[current_index].is_current = True
-                old_current_index = self.cities.index(current_city)
-                new_cities[old_current_index].is_current = False
-                States.append(tsp(new_cities, 'Move to {}'.format(city.name), new_gval, self))
+                States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(city.name), new_gval, self))
             
         return States        
         
@@ -95,7 +92,9 @@ class tsp(StateSpace):
         hash_list = []
         for city in self.cities:
             hash_list.append(city.get_city_details())
-                   
+            
+        hash_list.insert(0, (self.current_city).get_city_details())
+        
         return tuple(sorted(hash_list))
         
 
@@ -106,7 +105,7 @@ class tsp(StateSpace):
             print("Action= \"{}\", S{}, g-value = {}, (Initial State)".format(self.action, self.index, self.gval))
                    
         for city in self.cities:
-            print ('Name={}\tPosition={}\tVisited={}\tStart={}\tCurrent={}'.format(city.name, city.position, city.is_visited, city.is_start,city == city.is_current))        
+            print ('Name={}\tPosition={}\tVisited={}\tStart={}\tCurrent={}'.format(city.name, city.position, city.is_visited, city.is_start,city == self.current_city))        
 
         print ('')
 
@@ -122,7 +121,7 @@ def tsp_goal_fn(state):
        by comparing the cost with the upper bound cost.'''
     
     for city in state.cities:
-        if city.is_start and not city.is_current:
+        if city.is_start and not (city == state.current_city):
             return False
         if not city.is_visited:
             return False
@@ -153,9 +152,9 @@ def make_init_state(cities, start_city=1):
         
         i += 1
     
-    all_cities[0].is_current = True   # set the current city as the start_city
+    current_city = all_cities[0]  # set the current city as the start_city
     
-    return tsp(all_cities, "START", 0)
+    return tsp(current_city, all_cities, "START", 0)
     
 
 
@@ -289,10 +288,7 @@ def draw_final_path(state):
         states.append(state)
         state = state.parent    
 
-    cities = []
-    for state in states:
-        current_city = [city for city in state.cities if city.is_current][0]
-        cities.append(current_city)
+    cities = [state.current_city for state in states]
     
     rest = deepcopy(cities)
     rest = rest[1:]
