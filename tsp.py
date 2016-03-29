@@ -203,41 +203,33 @@ def heur_MST_Manhattan(state, DW=False):
 
 def MST(state):
     ''' Kruskal's algorithm.
-        1. T (the final spanning tree) is defined to be the empty set
-        2. For each vertex v of G, make the empty set out of v
-        3. Sort the edges of G in ascending (non-decreasing) order
-        4. For each edge (u, v) from the sorted list of step 3.
+        1. mst_distance (the final spanning tree cost) is defined to be the 0
+        2. Sort the edges of G in ascending (non-decreasing) order
+        3. For each edge (u, v) from the sorted list of step 3.
            If u and v belong to different sets
-               Add (u,v) to T
+               Add the cost of the edge to mst_distance
                Get together u and v in one single set
-        5. Return T
+        4. Return mst_distance
     '''
-    min_distance = 0
+    mst_distance = 0
     
     current_city = state.current_city
     unvisited_cities = [city for city in state.cities if not city.is_visited]
-    sets = {}
-    for city in unvisited_cities:
-        sets[city] = [city]
-        
     city_pairs = itertools.combinations(unvisited_cities, 2)
+    
     edges = []
     for x,y in city_pairs:
         edges.append((dist_Euclidean(x, y), (x,y)))
-    edges = sorted(edges)
+    edges = sorted(edges, key=lambda x: x[0])
     
+    nodes_visited = []
     for e in edges:
-        discard = False
-        for v in sets.values():
-            if set(e[1]).issubset(v):
-                discard = True
-                break
-        if not discard:
-            min_distance += e[0]
-            sets[e[1][0]].append(e[1][1])
-            sets[e[1][1]].append(e[1][0])
-    
-    return min_distance
+        if not ((e[1][0] in nodes_visited) and (e[1][1] in nodes_visited)):
+            mst_distance += e[0]
+            nodes_visited.append(e[1][0])
+            nodes_visited.append(e[1][1])
+            
+    return mst_distance
             
             
 def dynamic_weight(state):
