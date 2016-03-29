@@ -1,31 +1,6 @@
 from tsp import *
 
 
-def test_successors(s):
-    s.print_state()
-    
-    for i in s.successors():
-        #test_heuristics(i)
-        i.print_state()
-        
-        
-def test_hash(s1, s2):
-    return s1.hashable_state() == s2.hashable_state()
-    
-
-def goal_check(s):
-    for city in s.cities:
-        city.is_visited = True
-    
-    return tsp_goal_fn(s)
-
-
-#def test_heuristics(s):
-    #return (heur_min_moves(s))
-    
-    
-
-
 
 def test_DFS(state):
     '''Depth first with full cycle checking'''
@@ -81,7 +56,6 @@ def test_Beam(state, heur_func=heur_zero):
     print("=========Test. Beam search with full cycle checking==========")
     final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
-    return final
 
 
 
@@ -109,27 +83,7 @@ if __name__ == '__main__':
     
     s100 = make_init_state(random_100)
     
-    #print ('_______________________________________________________________________________________________')
-    #print ('Testing Successors')
-    #test_successors(s1)
-
-    #print ('_______________________________________________________________________________________________')
-    #print ('Testing Hash Function')
-    #print ('Expected=True\tReturned={}'.format(test_hash(s1, s2)))
-    #print ('Expected=False\tReturned={}'.format(test_hash(s1, s3)))
-    #print ('Expected=False\tReturned={}'.format(test_hash(s2, s3)))
-    
-    #print ('_______________________________________________________________________________________________')    
-    #print ('Testing Goal Function')
-    #print ('Expected=True\tReturned={}'.format(goal_check(goal_check_1)))
-    #print ('Expected=False\tReturned={}'.format(tsp_goal_fn(s1)))
-    #print ('Expected=False\tReturned={}'.format(tsp_goal_fn(s2)))
-    
-    
-    #print ('_______________________________________________________________________________________________')
-    #print ('Testing Heuristics')
-    #test_heuristics(s1)
-    
+ 
     
     
 
@@ -140,7 +94,7 @@ if __name__ == '__main__':
     #test_UCS(s25)
     
     
-    ''' Un-comment only 1 of these to be as a heuristic '''
+    ''' Un-comment only one of these to be as a heuristic '''
     #heur_func = heur_zero
     #heur_func = heur_Euclidean(state)
     #heur_func = heur_Euclidean(state, True)
