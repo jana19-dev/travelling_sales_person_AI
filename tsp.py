@@ -3,7 +3,7 @@ from random import randint
 from copy import deepcopy
 import math
 import turtle
-
+import itertools
 
 
 '''
@@ -202,9 +202,42 @@ def heur_MST_Manhattan(state, DW=False):
 #############################################
 
 def MST(state):
-    '''Estimated distance to travel all the unvisited nodes starting from 
-       the current city'''
-    return 0
+    ''' Kruskal's algorithm.
+        1. T (the final spanning tree) is defined to be the empty set
+        2. For each vertex v of G, make the empty set out of v
+        3. Sort the edges of G in ascending (non-decreasing) order
+        4. For each edge (u, v) from the sorted list of step 3.
+           If u and v belong to different sets
+               Add (u,v) to T
+               Get together u and v in one single set
+        5. Return T
+    '''
+    min_distance = 0
+    
+    current_city = state.current_city
+    unvisited_cities = [city for city in state.cities if not city.is_visited]
+    sets = {}
+    for city in unvisited_cities:
+        sets[city] = [city]
+        
+    city_pairs = itertools.combinations(unvisited_cities, 2)
+    edges = []
+    for x,y in city_pairs:
+        edges.append((dist_Euclidean(x, y), (x,y)))
+    edges = sorted(edges)
+    
+    for e in edges:
+        discard = False
+        for v in sets.values():
+            if set(e[1]).issubset(v):
+                discard = True
+                break
+        if not discard:
+            min_distance += e[0]
+            sets[e[1][0]].append(e[1][1])
+            sets[e[1][1]].append(e[1][0])
+    
+    return min_distance
             
             
 def dynamic_weight(state):
