@@ -122,6 +122,7 @@ _BEAM = 6
 _SUM_HG = 0
 _H = 1
 _G = 2
+_SUM_HG_LIMITED = 3
 
 #Cycle Checking. Either CC_NONE 'none' (no cycle checking), CC_PATH
 #'path' (path checking only) or CC_FULL 'full' (full cycle checking,
@@ -175,6 +176,14 @@ class sNode:
             return self.gval < other.gval
         if sNode.lt_type == _H:
             return self.hval < other.hval
+        if sNode.lt_type == _SUM_HG_LIMITED:
+            if other.n > self.n + 20:
+                return False
+            else:
+                if (self.gval+self.hval) == (other.gval+other.hval):
+                    #break ties by greatest gval.
+                    return self.gval > other.gval
+                else: return ((self.gval+self.hval) < (other.gval+other.hval))
         print('sNode class has invalid comparator setting!')
         #return default of lowest gval (generating breadth first behavior)
         return self.gval < other.gval
@@ -224,8 +233,10 @@ class Open:
             self.insert = lambda node: heapq.heappush(self.open, node)
             self.extract = lambda: heapq.heappop(self.open)
         elif search_strategy == _IDA_STAR:    
-            # TO DO
-            pass
+            self.open = []
+            sNode.lt_type = _SUM_HG_LIMITED
+            self.insert = lambda node: heapq.heappush(self.open, node)
+            self.extract = lambda: heapq.heappop(self.open)
         elif search_strategy == _BEAM:
             # TO DO
             pass

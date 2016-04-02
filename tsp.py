@@ -63,14 +63,11 @@ tsp STATESPACE
 
 
 class tsp(StateSpace):
-    
-    
     def __init__(self, current_city, cities, action, gval, parent=None):
         """Initialize a tsp search state object."""
         StateSpace.__init__(self, action, gval, parent)
         self.cities = cities    # cities = [node1, node2, ... nodek]
         self.current_city = current_city
-        
 
     def successors(self):
         '''Return list of tsp objects that are the successors of the current object'''
@@ -85,8 +82,7 @@ class tsp(StateSpace):
                 States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(city.name), new_gval, self))
             
         return States        
-        
-        
+
     def hashable_state(self):
         '''Return a data item that can be used as a dictionary key to UNIQUELY represent the state.'''
         hash_list = []
