@@ -224,12 +224,23 @@ class Open:
             self.insert = lambda node: heapq.heappush(self.open, node)
             self.extract = lambda: heapq.heappop(self.open)
         elif search_strategy == _IDA_STAR:    
-            # TO DO TO do 
-            pass
+            #use priority queue for OPEN (first out is node with
+            #lowest fval = gval+hval)
+            self.open = []
+            #set node less than function to compare sums of hval and gval
+            sNode.lt_type = _SUM_HG
+            self.insert = lambda node: heapq.heappush(self.open, node)
+            self.extract = lambda: heapq.heappop(self.open)
+            # we weill take care of the limiting in the search function
         elif search_strategy == _BEAM:
-            # TO DO
-            pass
-            
+            #use priority queue for OPEN (first out is node with
+            #lowest fval = gval+hval)
+            self.open = []
+            #set node less than function to compare sums of hval and gval
+            sNode.lt_type = _SUM_HG
+            self.insert = lambda node: heapq.heappush(self.open, node)
+            self.extract = lambda: heapq.heappop(self.open)
+            # we weill take care of the limiting in the search function
             
 
     def empty(self): return not self.open
@@ -243,6 +254,9 @@ class Open:
                 print("   <S{}:{}:{}, g={}, h={}, f=g+h={}>".format(nd.state.index, nd.state.action, nd.state.hashable_state(), nd.gval, nd.hval, nd.gval+nd.hval), end="")
         print("}")
 
+    def size(self): return len(self.open)
+    
+    
 class SearchEngine:
     def __init__(self, strategy = 'depth_first', cc_level = 'default'):
         self.set_strategy(strategy, cc_level)
@@ -306,7 +320,7 @@ class SearchEngine:
 
         return rval
 
-    def search(self, initState, goal_fn, heur_fn = _zero_hfn):
+    def search(self, initState, goal_fn, heur_fn = _zero_hfn, LIMIT=15):
         #Perform full cycle checking as follows
         #a. check state before inserting into OPEN. If we had already reached
         #   the same state via a cheaper path, don't insert into OPEN.
@@ -339,7 +353,7 @@ class SearchEngine:
         OPEN.insert(node)
 
     ###NOW do the search and return the result
-        goal_node = self.searchOpen(OPEN, goal_fn, heur_fn)
+        goal_node = self.searchOpen(OPEN, goal_fn, heur_fn, LIMIT)
         if goal_node:
             print("Search Successful!")
             print("   Strategy = '{}'".format(self.get_strategy()))
@@ -361,7 +375,7 @@ class SearchEngine:
             print("Search time = {}, nodes expanded = {}, states generated = {}, states cycle check pruned = {}".format(self.total_search_time,sNode.n, StateSpace.n, self.cycle_check_pruned))
             return False
 
-    def searchOpen(self, OPEN, goal_fn, heur_fn):
+    def searchOpen(self, OPEN, goal_fn, heur_fn, LIMIT):
         '''Open has some nodes on it, now search from that state of OPEN'''
 
         #BEGIN TRACING
@@ -370,7 +384,12 @@ class SearchEngine:
             if self.cycle_check == _CC_FULL:
                 print("   TRACE: Initial CC_Dict:", self.cc_dictionary)
         #END TRACING
-
+        
+        # BEAM SEARCH LIMITING THE OPEN QUEUE TO "LIMIT" NUMBER CITIES ONLY
+        if self.strategy == _BEAM:
+            while OPEN.size() > LIMIT:
+                OPEN.open.pop()
+                
         while not OPEN.empty():
             node = OPEN.extract()
 

@@ -50,11 +50,11 @@ def test_IDAstar(state, heur_func=heur_zero):
     draw_final_path(final)
 
 
-def test_Beam(state, heur_func=heur_zero):
+def test_Beam(state, heur_func=heur_zero, LIMIT=15):
     '''Beam search with full cycle checking'''
     se = SearchEngine(strategy = 'beam', cc_level = 'full')
     print("=========Test. Beam search with full cycle checking==========")
-    final = se.search(state, tsp_goal_fn, heur_func)
+    final = se.search(state, tsp_goal_fn, heur_func, LIMIT)
     draw_final_path(final)
 
 
