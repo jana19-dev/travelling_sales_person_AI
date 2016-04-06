@@ -221,8 +221,9 @@ def MST(state):
     nodes_visited = []
     for e in edges:
         if not ((e[1][0] in nodes_visited) and (e[1][1] in nodes_visited)):
+            print (e[0], e[1][0].name, e[1][1].name)
             mst_distance += e[0]
-            nodes_visited.append(e[1][0])
+            nodes_visited.append(sorted(e[1][0].name, e[1][1].name))
             nodes_visited.append(e[1][1])
             
     return mst_distance

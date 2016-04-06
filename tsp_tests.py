@@ -87,9 +87,9 @@ if __name__ == '__main__':
     
     
 
-    #test_DFS(s25)
+    test_DFS(s5)
 
-    #test_BFS(s25)
+    test_BFS(s5)
 
     #test_UCS(s25)
     
