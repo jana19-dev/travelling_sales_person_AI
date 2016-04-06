@@ -164,17 +164,17 @@ def heur_zero(state):
 
 
 def heur_Euclidean(state, DW=False):
-    '''The euclidean distance to the nearest unvisited neighbour from the 
-        current city + The minimum euclidean distance from an unvisited 
-        city (not the current city) to the start city.
-        If DW=True, multiply the result by dynamic_weight(state).'''
+    '''The MIN from all unvisited cities {
+       The euclidean distance to the unvisited city from the current city + 
+       The euclidean distance from that unvisited city back to the start city }
+       If DW=True, multiply the result by dynamic_weight(state).'''
     return 0
 
 
 def heur_Manhattan(state, DW=False):
-    '''The manhattan distance to the nearest unvisited neighbour from the 
-       current city + The minimum manhattan distance from an unvisited 
-       city (not the current city) to the start city.
+    '''The MIN from all unvisited cities {
+       The manhattan distance to the unvisited city from the current city + 
+       The manhattan distance from that unvisited city to the start city }
        If DW=True, multiply the result by dynamic_weight(state).'''
     return 0
 
@@ -183,14 +183,20 @@ def heur_MST_Euclidean(state, DW=False):
     '''Estimated Euclidean distance to travel all the unvisited nodes
        starting from the current city + heur_Euclidean.
        If DW=True, multiply the result by dynamic_weight(state).'''
-    return 0
+    if DW:
+        return (MST(state) + heur_Euclidean(state)) * dynamic_weight(state)
+    else:
+        return (MST(state) + heur_Euclidean(state))
 
 
 def heur_MST_Manhattan(state, DW=False):
     '''Estimated Manhattan distance to travel all the unvisited nodes 
        starting from the current city + heur_Manhattan.
        If DW=True, multiply the result by dynamic_weight(state).'''
-    return 0
+    if DW:
+        return (MST(state) + heur_Manhattan(state)) * dynamic_weight(state)
+    else:
+        return (MST(state) + heur_Manhattan(state))
 
 
 #############################################

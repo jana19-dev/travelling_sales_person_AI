@@ -224,7 +224,7 @@ class Open:
             self.insert = lambda node: heapq.heappush(self.open, node)
             self.extract = lambda: heapq.heappop(self.open)
         elif search_strategy == _IDA_STAR:    
-            # TO DO
+            # TO DO TO do 
             pass
         elif search_strategy == _BEAM:
             # TO DO
