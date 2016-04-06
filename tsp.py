@@ -237,7 +237,11 @@ def MST(state):
             
 def dynamic_weight(state):
     '''Return the number of unvisited cities in the current state'''
-    return 0
+    count = 0
+    for city in state.cities:
+        if not city.is_visited:
+            count += 1
+    return count
 
 
 
