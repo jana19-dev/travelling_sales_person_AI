@@ -390,6 +390,8 @@ class SearchEngine:
             while OPEN.size() > LIMIT:
                 OPEN.open.pop()
                 
+        DEPTH = 1       # USED FOR IDA_STAR
+        
         while not OPEN.empty():
             node = OPEN.extract()
 
@@ -419,7 +421,13 @@ class SearchEngine:
             if self.cycle_check == _CC_FULL and self.cc_dictionary[node.state.hashable_state()] < node.gval:
                 continue
 
-            successors = node.state.successors()
+            # LIMIT THE DEPTH FOR ITERATIVE DEEPENING A_STAR
+            if self.strategy == _IDA_STAR:
+                if LIMIT == DEPTH:
+                    successors = []  
+            else:
+                successors = node.state.successors()
+                DEPTH +=1
 
             #BEGIN TRACING
             if self.trace:

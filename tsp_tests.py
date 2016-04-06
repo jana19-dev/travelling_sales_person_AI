@@ -42,11 +42,16 @@ def test_Greedy_BFS(state, heur_func=heur_zero):
     draw_final_path(final)
     
     
-def test_IDAstar(state, heur_func=heur_zero):
+def test_IDAstar(state, heur_func=heur_zero, LIMIT=1):
     '''IDA* with full cycle checking'''
     se = SearchEngine(strategy = 'ida*', cc_level = 'full')
-    print("=========Test. IDA* with full cycle checking==========")
-    final = se.search(state, tsp_goal_fn, heur_func)
+    print("=========Test. IDA* with full cycle checking DEPTH {}==========".format(LIMIT))
+    final = se.search(state, tsp_goal_fn, heur_func, LIMIT)
+    while not final:
+        LIMIT += 1
+        final = se.search(state, tsp_goal_fn, heur_func, LIMIT)
+        if LIMIT >= len(state.cities) - 1:
+            break
     draw_final_path(final)
 
 
