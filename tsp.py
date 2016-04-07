@@ -168,15 +168,19 @@ def heur_Euclidean(state, DW=False):
        The euclidean distance to the unvisited city from the current city + 
        The euclidean distance from that unvisited city back to the start city }
        If DW=True, multiply the result by dynamic_weight(state).'''
-    return 0
-
+    current_city = state.current_city
+    distances = [dist_Euclidean(current_city, city) for city in state.cities if not city.is_visited]
+    return min(distances)
+        
 
 def heur_Manhattan(state, DW=False):
     '''The MIN from all unvisited cities {
        The manhattan distance to the unvisited city from the current city + 
        The manhattan distance from that unvisited city to the start city }
        If DW=True, multiply the result by dynamic_weight(state).'''
-    return 0
+    current_city = state.current_city
+    distances = [dist_Manhattan(current_city, city) for city in state.cities if not city.is_visited]
+    return min(distances)
 
 
 def heur_MST_Euclidean(state, DW=False):
