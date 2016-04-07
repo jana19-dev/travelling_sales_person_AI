@@ -34,8 +34,8 @@ def dist_Euclidean(node1, node2):
     (x1,y1) = node1.position
     (x2,y2) = node2.position
     
-    xdiff = x2 - x1
-    ydiff = y2 - y1
+    xdiff = abs(x2 - x1)
+    ydiff = abs(y2 - y1)
     
     return int(math.sqrt(xdiff*xdiff + ydiff*ydiff))
 
@@ -80,7 +80,6 @@ class tsp(StateSpace):
                 current_index = self.cities.index(city)
                 new_cities[current_index].is_visited = True
                 States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(city.name), new_gval, self))
-            
         return States        
 
     def hashable_state(self):
@@ -106,6 +105,9 @@ class tsp(StateSpace):
         print ('')
 
 
+    def get_unvisited(self):
+        return [city for city in self.cities if not city.is_visited]
+    
     
 #############################################
 # Goal Function and Initialization          #
@@ -113,15 +115,10 @@ class tsp(StateSpace):
 
 
 def tsp_goal_fn(state):
-    '''Have we reached a goal state. Make sure its atleast close to optimal
-       by comparing the cost with the upper bound cost.'''
+    '''Have we reached a goal state, such that we have visited all cities
+       and back at the start city.'''
     
-    for city in state.cities:
-        if city.is_start and not (city == state.current_city):
-            return False
-        if not city.is_visited:
-            return False
-    return True
+    return not state.get_unvisited() and (state.current_city).is_start
 
 
 def make_init_state(cities, start_city=1):
@@ -169,10 +166,14 @@ def heur_Euclidean(state):
        The euclidean distance from that unvisited city back to the start city }
     '''
     current_city = state.current_city
-    d1 = [dist_Euclidean(current_city, city) for city in state.cities if not city.is_visited]
+    d1 = [dist_Euclidean(current_city, city) for city in state.get_unvisited() if not city.is_start]
     
-    start_city = [city for city in state.cities if city.is_start][0]
-    d2 = [dist_Euclidean(start_city, city) for city in state.cities if not city.is_visited]
+    start_city = ''
+    for city in state.cities:
+        if city.is_start:
+            start_city = city
+            break
+    d2 = [dist_Euclidean(start_city, city) for city in state.get_unvisited() if not city.is_start]
     
     if not d1 and not d2:
         return 0
@@ -186,10 +187,14 @@ def heur_Manhattan(state):
        The manhattan distance from that unvisited city to the start city }
     '''
     current_city = state.current_city
-    d1 = [dist_Manhattan(current_city, city) for city in state.cities if not city.is_visited]
+    d1 = [dist_Manhattan(current_city, city) for city in state.get_unvisited() if not city.is_start]
     
-    start_city = [city for city in state.cities if city.is_start][0]
-    d2 = [dist_Manhattan(start_city, city) for city in state.cities if not city.is_visited]
+    start_city = ''
+    for city in state.cities:
+        if city.is_start:
+            start_city = city
+            break
+    d2 = [dist_Manhattan(start_city, city) for city in state.get_unvisited() if not city.is_start]
     
     if not d1 and not d2:
         return 0
@@ -223,7 +228,6 @@ def dynamic_heur_MST_Manhattan(state):
     return dynamic_weight(state) * heur_MST_Manhattan(state)
 
 
-
 #############################################
 # Helper functions for heuristics           #
 #############################################
@@ -241,7 +245,7 @@ def MST(state):
     mst_distance = 0
     
     current_city = state.current_city
-    unvisited_cities = [city for city in state.cities if not city.is_visited]
+    unvisited_cities = state.get_unvisited()
     city_pairs = itertools.combinations(unvisited_cities, 2)
     
     edges = []
@@ -261,12 +265,7 @@ def MST(state):
             
 def dynamic_weight(state):
     '''Return the number of unvisited cities in the current state'''
-    count = 0
-    for city in state.cities:
-        if not city.is_visited:
-            count += 1
-    return count/len(state.cities)
-
+    return len(state.get_unvisited()) / len(state.cities)
 
 
 
