@@ -47,11 +47,6 @@ def test_IDAstar(state, heur_func=heur_zero, LIMIT=1):
     se = SearchEngine(strategy = 'ida*', cc_level = 'full')
     print("=========Test. IDA* with full cycle checking DEPTH {}==========".format(LIMIT))
     final = se.search(state, tsp_goal_fn, heur_func, LIMIT)
-    while not final:
-        LIMIT += 1
-        final = se.search(state, tsp_goal_fn, heur_func, LIMIT)
-        if LIMIT >= len(state.cities) - 1:
-            break
     draw_final_path(final)
 
 
@@ -90,27 +85,30 @@ if __name__ == '__main__':
     
  
     
-    
+    state = s10
 
-    #test_DFS(s5)
+    #test_DFS(state)
 
-    #test_BFS(s5)
+    #test_BFS(state)
 
-    #test_UCS(s25)
+    #test_UCS(state)
     
+    #test_Astar(state, heur_MST_Euclidean)
+    #test_Astar(state, dynamic_heur_MST_Euclidean)
+    #test_Astar(state, heur_MST_Manhattan)
+    #test_Astar(state, dynamic_heur_MST_Manhattan)
     
-    ''' Un-comment only one of these to be as a heuristic '''
-    #heur_func = heur_zero
-    #heur_func = heur_MST_Euclidean
-    #heur_func = dynamic_heur_MST_Euclidean
-    #heur_func = heur_MST_Manhattan
-    #heur_func = dynamic_heur_MST_Manhattan  
+    #test_Greedy_BFS(state, heur_MST_Euclidean)
+    #test_Greedy_BFS(state, dynamic_heur_MST_Euclidean)
+    #test_Greedy_BFS(state, heur_MST_Manhattan)
+    #test_Greedy_BFS(state, dynamic_heur_MST_Manhattan)
     
+    test_IDAstar(state, heur_MST_Euclidean)
+    test_IDAstar(state, dynamic_heur_MST_Euclidean)
+    test_IDAstar(state, heur_MST_Manhattan)
+    test_IDAstar(state, dynamic_heur_MST_Manhattan)
     
-    #test_Astar(s5, heur_func)
-    
-    #test_Greedy_BFS(s5, heur_func)
-    
-    #test_IDAstar(s5, heur_func)
-    
-    #test_Beam(s5, heur_func)
+    #test_Beam(state, heur_MST_Euclidean)
+    #test_Beam(state, dynamic_heur_MST_Euclidean)
+    #test_Beam(state, heur_MST_Manhattan)
+    #test_Beam(state, dynamic_heur_MST_Manhattan)

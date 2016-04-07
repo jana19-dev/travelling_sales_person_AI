@@ -368,6 +368,10 @@ class SearchEngine:
             print("Search time = {}, nodes expanded = {}, states generated = {}, states cycle check pruned = {}".format(self.total_search_time,sNode.n, StateSpace.n, self.cycle_check_pruned))
             return goal_node.state
         else:
+            if self.strategy == _IDA_STAR:
+                if LIMIT < len(initState.cities):
+                    LIMIT += 1
+                    return self.search(initState, goal_fn, heur_fn, LIMIT)
         #exited the while without finding goal---search failed
             print("Search Failed! (strategy '{}') No solution found".format(self.get_strategy()))
             self.total_search_time = os.times()[0] - self.total_search_time
