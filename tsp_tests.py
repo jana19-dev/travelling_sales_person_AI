@@ -8,6 +8,7 @@ def test_DFS(state):
     print("=========Test. Depth first with full cycle checking=========") 
     final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
+    print ('\n')
     
 
 def test_BFS(state):
@@ -16,6 +17,7 @@ def test_BFS(state):
     print("=========Test. Breadth first with full cycle checking=========") 
     final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
+    print ('\n')
 
 
 def test_UCS(state):
@@ -24,6 +26,7 @@ def test_UCS(state):
     print("=========Test. Uniform Cost with full cycle checking==========")
     final = se.search(state, tsp_goal_fn)
     draw_final_path(final)
+    print ('\n')
 
 
 def test_Astar(state, heur_func=heur_zero):
@@ -32,6 +35,7 @@ def test_Astar(state, heur_func=heur_zero):
     print("=========Test. A* with full cycle checking==========")
     final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
+    print ('\n')
 
 
 def test_Greedy_BFS(state, heur_func=heur_zero):
@@ -40,14 +44,16 @@ def test_Greedy_BFS(state, heur_func=heur_zero):
     print("=========Test. Greedy BFS with full cycle checking==========")
     final = se.search(state, tsp_goal_fn, heur_func)
     draw_final_path(final)
+    print ('\n')
     
     
 def test_IDAstar(state, heur_func=heur_zero, LIMIT=1):
     '''IDA* with full cycle checking'''
     se = SearchEngine(strategy = 'ida*', cc_level = 'full')
-    print("=========Test. IDA* with full cycle checking DEPTH {}==========".format(LIMIT))
+    print("=========Test. IDA* with full cycle checking============")
     final = se.search(state, tsp_goal_fn, heur_func, LIMIT)
     draw_final_path(final)
+    print ('\n')
 
 
 def test_Beam(state, heur_func=heur_zero, LIMIT=15):
@@ -56,6 +62,7 @@ def test_Beam(state, heur_func=heur_zero, LIMIT=15):
     print("=========Test. Beam search with full cycle checking==========")
     final = se.search(state, tsp_goal_fn, heur_func, LIMIT)
     draw_final_path(final)
+    print ('\n')
 
 
 
@@ -85,7 +92,7 @@ if __name__ == '__main__':
     
  
     
-    state = s10
+    state = s5
 
     #test_DFS(state)
 
@@ -93,22 +100,22 @@ if __name__ == '__main__':
 
     #test_UCS(state)
     
-    #test_Astar(state, heur_MST_Euclidean)
-    #test_Astar(state, dynamic_heur_MST_Euclidean)
-    #test_Astar(state, heur_MST_Manhattan)
-    #test_Astar(state, dynamic_heur_MST_Manhattan)
-    
-    #test_Greedy_BFS(state, heur_MST_Euclidean)
-    #test_Greedy_BFS(state, dynamic_heur_MST_Euclidean)
+    #test_Greedy_BFS(state, heur_MST_Euclidean)  
     #test_Greedy_BFS(state, heur_MST_Manhattan)
+    #test_Greedy_BFS(state, dynamic_heur_MST_Euclidean)
     #test_Greedy_BFS(state, dynamic_heur_MST_Manhattan)
     
-    test_IDAstar(state, heur_MST_Euclidean)
-    test_IDAstar(state, dynamic_heur_MST_Euclidean)
-    test_IDAstar(state, heur_MST_Manhattan)
-    test_IDAstar(state, dynamic_heur_MST_Manhattan)
+    #test_Astar(state, heur_MST_Euclidean)
+    #test_Astar(state, heur_MST_Manhattan)
+    #test_Astar(state, dynamic_heur_MST_Euclidean)
+    #test_Astar(state, dynamic_heur_MST_Manhattan)
+    
+    #test_IDAstar(state, heur_MST_Euclidean)
+    #test_IDAstar(state, heur_MST_Manhattan)
+    #test_IDAstar(state, dynamic_heur_MST_Euclidean)
+    #test_IDAstar(state, dynamic_heur_MST_Manhattan)
     
     #test_Beam(state, heur_MST_Euclidean)
-    #test_Beam(state, dynamic_heur_MST_Euclidean)
     #test_Beam(state, heur_MST_Manhattan)
+    #test_Beam(state, dynamic_heur_MST_Euclidean)
     #test_Beam(state, dynamic_heur_MST_Manhattan)

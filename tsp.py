@@ -169,11 +169,15 @@ def heur_Euclidean(state):
        The euclidean distance from that unvisited city back to the start city }
        If DW=True, multiply the result by dynamic_weight(state).'''
     current_city = state.current_city
-    distances = [dist_Euclidean(current_city, city) for city in state.cities if not city.is_visited]
-    if not distances:
+    d1 = [dist_Euclidean(current_city, city) for city in state.cities if not city.is_visited]
+    
+    start_city = [city for city in state.cities if city.is_start][0]
+    d2 = [dist_Euclidean(start_city, city) for city in state.cities if not city.is_visited]
+    
+    if not d1 and not d2:
         return 0
     else:
-        return min(distances)
+        return min(d1) + min(d2)
         
 
 def heur_Manhattan(state):
@@ -182,11 +186,15 @@ def heur_Manhattan(state):
        The manhattan distance from that unvisited city to the start city }
        If DW=True, multiply the result by dynamic_weight(state).'''
     current_city = state.current_city
-    distances = [dist_Manhattan(current_city, city) for city in state.cities if not city.is_visited]
-    if not distances:
+    d1 = [dist_Manhattan(current_city, city) for city in state.cities if not city.is_visited]
+    
+    start_city = [city for city in state.cities if city.is_start][0]
+    d2 = [dist_Manhattan(start_city, city) for city in state.cities if not city.is_visited]
+    
+    if not d1 and not d2:
         return 0
     else:
-        return min(distances)
+        return min(d1) + min(d2)
 
 
 def heur_MST_Euclidean(state):
@@ -248,7 +256,7 @@ def MST(state):
         if not ((e[1][0] in nodes_visited) and (e[1][1] in nodes_visited)):
             mst_distance += e[0]
             nodes_visited.append(e[1][1])
-        if len(nodes_visited) == len(unvisited_cities):
+        if len(nodes_visited) >= len(unvisited_cities):
             break
     return mst_distance
             
@@ -259,7 +267,7 @@ def dynamic_weight(state):
     for city in state.cities:
         if not city.is_visited:
             count += 1
-    return count
+    return count/len(state.cities)
 
 
 
