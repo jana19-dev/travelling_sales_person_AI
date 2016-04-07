@@ -393,8 +393,7 @@ class SearchEngine:
         while not OPEN.empty():
             # BEAM SEARCH LIMITING THE OPEN QUEUE TO "LIMIT" NUMBER CITIES ONLY
             if self.strategy == _BEAM:
-                while OPEN.size() > len(initState.cities):
-                    OPEN.open.pop()
+                OPEN.open = OPEN.open[:len(initState.cities)]
 
             node = OPEN.extract()
 
