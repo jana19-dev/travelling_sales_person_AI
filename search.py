@@ -162,14 +162,14 @@ class sNode:
            search this comparison function compares the h-value, the
            g-value or the f-value of the nodes. Note for the f-value
            we wish to break ties by letting node1 < node2 if they both
-           have identical f-values but if node1 has a GREATER g
-           value. This means that we expand nodes along deeper paths
+           have identical f-values but if node1 has a SMALLER g
+           value. This means that we expand nodes along shorter paths
            first causing the search to proceed directly to the goal'''
         
         if sNode.lt_type == _SUM_HG:
             if (self.gval+self.hval) == (other.gval+other.hval):
-                #break ties by greatest gval. 
-                return self.gval > other.gval
+                #break ties by smallest gval. 
+                return self.gval < other.gval
             else: return ((self.gval+self.hval) < (other.gval+other.hval))
         if sNode.lt_type == _G:
             return self.gval < other.gval
@@ -207,14 +207,6 @@ class Open:
             sNode.lt_type = _H
             self.insert = lambda node: heapq.heappush(self.open, node)
             self.extract = lambda: heapq.heappop(self.open)
-        elif search_strategy == _ASTAR:
-            #use priority queue for OPEN (first out is node with
-            #lowest fval = gval+hval)
-            self.open = []
-            #set node less than function to compare sums of hval and gval
-            sNode.lt_type = _SUM_HG
-            self.insert = lambda node: heapq.heappush(self.open, node)
-            self.extract = lambda: heapq.heappop(self.open)
         elif search_strategy == _UNIFORM_COST:
             #use priority queue for OPEN (first out is node with
             #lowest gval)      
@@ -222,8 +214,8 @@ class Open:
             #set node less than function to compare gvals only
             sNode.lt_type = _G
             self.insert = lambda node: heapq.heappush(self.open, node)
-            self.extract = lambda: heapq.heappop(self.open)
-        elif search_strategy == _IDA_STAR:    
+            self.extract = lambda: heapq.heappop(self.open)            
+        elif (search_strategy == _ASTAR) or (search_strategy == _IDA_STAR) or (search_strategy == _BEAM):
             #use priority queue for OPEN (first out is node with
             #lowest fval = gval+hval)
             self.open = []
@@ -231,16 +223,6 @@ class Open:
             sNode.lt_type = _SUM_HG
             self.insert = lambda node: heapq.heappush(self.open, node)
             self.extract = lambda: heapq.heappop(self.open)
-            # we weill take care of the limiting in the search function
-        elif search_strategy == _BEAM:
-            #use priority queue for OPEN (first out is node with
-            #lowest fval = gval+hval)
-            self.open = []
-            #set node less than function to compare sums of hval and gval
-            sNode.lt_type = _SUM_HG
-            self.insert = lambda node: heapq.heappush(self.open, node)
-            self.extract = lambda: heapq.heappop(self.open)
-            # we weill take care of the limiting in the search function
             
 
     def empty(self): return not self.open
@@ -254,7 +236,7 @@ class Open:
                 print("   <S{}:{}:{}, g={}, h={}, f=g+h={}>".format(nd.state.index, nd.state.action, nd.state.hashable_state(), nd.gval, nd.hval, nd.gval+nd.hval), end="")
         print("}")
 
-    def size(self): return len(self.open)
+
     
     
 class SearchEngine:
@@ -356,7 +338,10 @@ class SearchEngine:
         goal_node = self.searchOpen(OPEN, goal_fn, heur_fn, LIMIT, initState)
         if goal_node:
             print("Search Successful!")
-            print("   Strategy = '{}'".format(self.get_strategy()))
+            if self.strategy == _IDA_STAR:
+                print("   Strategy = '{}, Depth Level = {}'".format(self.get_strategy(), LIMIT))
+            else:
+                print("   Strategy = '{}'".format(self.get_strategy()))
             print("   Solution cost = {}".format(goal_node.gval))
             #print("   Goal state: ", end="")
             #goal_node.state.print_state()
@@ -364,7 +349,6 @@ class SearchEngine:
             #print("Solution Path:")
             #goal_node.state.print_path()
             self.total_search_time = os.times()[0] - self.total_search_time
-            print("----------------------------")
             print("Search time = {}, nodes expanded = {}, states generated = {}, states cycle check pruned = {}".format(self.total_search_time,sNode.n, StateSpace.n, self.cycle_check_pruned))
             return goal_node.state
         else:
@@ -375,7 +359,6 @@ class SearchEngine:
         #exited the while without finding goal---search failed
             print("Search Failed! (strategy '{}') No solution found".format(self.get_strategy()))
             self.total_search_time = os.times()[0] - self.total_search_time
-            print("----------------------------")
             print("Search time = {}, nodes expanded = {}, states generated = {}, states cycle check pruned = {}".format(self.total_search_time,sNode.n, StateSpace.n, self.cycle_check_pruned))
             return False
 
@@ -391,9 +374,14 @@ class SearchEngine:
 
         DEPTH = 1       # USED FOR IDA_STAR
         while not OPEN.empty():
-            # BEAM SEARCH LIMITING THE OPEN QUEUE TO "LIMIT" NUMBER CITIES ONLY
-            if self.strategy == _BEAM:
-                OPEN.open = OPEN.open[:len(initState.cities)]
+            # BEAM SEARCH LIMITING THE OPEN QUEUE TO NUMBER OF CITIES ONLY
+            if self.strategy == _BEAM and DEPTH > 2:
+                good_choices = []
+                for i in range(len(initState.cities)):
+                    good_choices.append(OPEN.extract())
+                Open.open = []
+                for choice in good_choices:
+                    OPEN.insert(sNode(choice.state, heur_fn(choice.state)))
 
             node = OPEN.extract()
 

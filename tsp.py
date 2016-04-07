@@ -167,7 +167,7 @@ def heur_Euclidean(state):
     '''The MIN from all unvisited cities {
        The euclidean distance to the unvisited city from the current city + 
        The euclidean distance from that unvisited city back to the start city }
-       If DW=True, multiply the result by dynamic_weight(state).'''
+    '''
     current_city = state.current_city
     d1 = [dist_Euclidean(current_city, city) for city in state.cities if not city.is_visited]
     
@@ -184,7 +184,7 @@ def heur_Manhattan(state):
     '''The MIN from all unvisited cities {
        The manhattan distance to the unvisited city from the current city + 
        The manhattan distance from that unvisited city to the start city }
-       If DW=True, multiply the result by dynamic_weight(state).'''
+    '''
     current_city = state.current_city
     d1 = [dist_Manhattan(current_city, city) for city in state.cities if not city.is_visited]
     
@@ -199,15 +199,13 @@ def heur_Manhattan(state):
 
 def heur_MST_Euclidean(state):
     '''Estimated Euclidean distance to travel all the unvisited nodes
-       starting from the current city + heur_Euclidean.
-       If DW=True, multiply the result by dynamic_weight(state).'''
+       starting from the current city + heur_Euclidean.'''
     return (MST(state) + heur_Euclidean(state))
 
 
 def heur_MST_Manhattan(state):
     '''Estimated Manhattan distance to travel all the unvisited nodes 
-       starting from the current city + heur_Manhattan.
-       If DW=True, multiply the result by dynamic_weight(state).'''
+       starting from the current city + heur_Manhattan.'''
     return (MST(state) + heur_Manhattan(state))
 
 
