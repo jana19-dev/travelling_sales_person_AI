@@ -237,6 +237,7 @@ class Open:
         print("}")
 
 
+    def clear(self): self.open = []
     
     
 class SearchEngine:
@@ -375,11 +376,11 @@ class SearchEngine:
         DEPTH = 1       # USED FOR IDA_STAR
         while not OPEN.empty():
             # BEAM SEARCH LIMITING THE OPEN QUEUE TO NUMBER OF CITIES ONLY
-            if self.strategy == _BEAM and DEPTH > 2:
+            if self.strategy == _BEAM and len(OPEN.open) > len(initState.cities):
                 good_choices = []
                 for i in range(len(initState.cities)):
                     good_choices.append(OPEN.extract())
-                Open.open = []
+                OPEN.clear()
                 for choice in good_choices:
                     OPEN.insert(sNode(choice.state, heur_fn(choice.state)))
 
@@ -411,13 +412,14 @@ class SearchEngine:
             if self.cycle_check == _CC_FULL and self.cc_dictionary[node.state.hashable_state()] < node.gval:
                 continue
 
-            successors = node.state.successors()
-            
+            successors = [] 
             # LIMIT THE DEPTH FOR ITERATIVE DEEPENING A_STAR
-            if self.strategy == _IDA_STAR:
-                if LIMIT == DEPTH:
-                    successors = []  
-                    
+            if self.strategy == _IDA_STAR and LIMIT == DEPTH:
+                pass
+            else:
+                successors = node.state.successors()
+            
+                  
             DEPTH +=1
 
             #BEGIN TRACING
