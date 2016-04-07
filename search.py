@@ -421,13 +421,14 @@ class SearchEngine:
             if self.cycle_check == _CC_FULL and self.cc_dictionary[node.state.hashable_state()] < node.gval:
                 continue
 
+            successors = node.state.successors()
+            
             # LIMIT THE DEPTH FOR ITERATIVE DEEPENING A_STAR
             if self.strategy == _IDA_STAR:
                 if LIMIT == DEPTH:
                     successors = []  
-            else:
-                successors = node.state.successors()
-                DEPTH +=1
+                    
+            DEPTH +=1
 
             #BEGIN TRACING
             if self.trace:

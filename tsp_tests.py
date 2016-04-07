@@ -92,23 +92,19 @@ if __name__ == '__main__':
     
     
 
-    test_DFS(s5)
+    #test_DFS(s5)
 
-    test_BFS(s5)
+    #test_BFS(s5)
 
     #test_UCS(s25)
     
     
     ''' Un-comment only one of these to be as a heuristic '''
     #heur_func = heur_zero
-    #heur_func = heur_Euclidean(state)
-    #heur_func = heur_Euclidean(state, True)
-    #heur_func = heur_Manhattan(state)
-    #heur_func = heur_Manhattan(state, True)
-    #heur_func = heur_MST_Euclidean(state)
-    #heur_func = heur_MST_Euclidean(state, True)
-    #heur_func = heur_MST_Manhattan(state)
-    #heur_func = heur_MST_Manhattan(state, True)    
+    #heur_func = heur_MST_Euclidean
+    #heur_func = dynamic_heur_MST_Euclidean
+    #heur_func = heur_MST_Manhattan
+    #heur_func = dynamic_heur_MST_Manhattan  
     
     
     #test_Astar(s5, heur_func)

@@ -163,44 +163,59 @@ def heur_zero(state):
     return 0
 
 
-def heur_Euclidean(state, DW=False):
+def heur_Euclidean(state):
     '''The MIN from all unvisited cities {
        The euclidean distance to the unvisited city from the current city + 
        The euclidean distance from that unvisited city back to the start city }
        If DW=True, multiply the result by dynamic_weight(state).'''
     current_city = state.current_city
     distances = [dist_Euclidean(current_city, city) for city in state.cities if not city.is_visited]
-    return min(distances)
+    if not distances:
+        return 0
+    else:
+        return min(distances)
         
 
-def heur_Manhattan(state, DW=False):
+def heur_Manhattan(state):
     '''The MIN from all unvisited cities {
        The manhattan distance to the unvisited city from the current city + 
        The manhattan distance from that unvisited city to the start city }
        If DW=True, multiply the result by dynamic_weight(state).'''
     current_city = state.current_city
     distances = [dist_Manhattan(current_city, city) for city in state.cities if not city.is_visited]
-    return min(distances)
+    if not distances:
+        return 0
+    else:
+        return min(distances)
 
 
-def heur_MST_Euclidean(state, DW=False):
+def heur_MST_Euclidean(state):
     '''Estimated Euclidean distance to travel all the unvisited nodes
        starting from the current city + heur_Euclidean.
        If DW=True, multiply the result by dynamic_weight(state).'''
-    if DW:
-        return (MST(state) + heur_Euclidean(state)) * dynamic_weight(state)
-    else:
-        return (MST(state) + heur_Euclidean(state))
+    return (MST(state) + heur_Euclidean(state))
 
 
-def heur_MST_Manhattan(state, DW=False):
+def heur_MST_Manhattan(state):
     '''Estimated Manhattan distance to travel all the unvisited nodes 
        starting from the current city + heur_Manhattan.
        If DW=True, multiply the result by dynamic_weight(state).'''
-    if DW:
-        return (MST(state) + heur_Manhattan(state)) * dynamic_weight(state)
-    else:
-        return (MST(state) + heur_Manhattan(state))
+    return (MST(state) + heur_Manhattan(state))
+
+
+
+def dynamic_heur_Euclidean(state):
+    return dynamic_weight(state) * heur_Euclidean(state)
+
+def dynamic_heur_Manhattan(state):
+    return dynamic_weight(state) * heur_Manhattan(state)
+
+def dynamic_heur_MST_Euclidean(state):
+    return dynamic_weight(state) * heur_MST_Euclidean(state)
+
+def dynamic_heur_MST_Manhattan(state):
+    return dynamic_weight(state) * heur_MST_Manhattan(state)
+
 
 
 #############################################
@@ -231,11 +246,10 @@ def MST(state):
     nodes_visited = []
     for e in edges:
         if not ((e[1][0] in nodes_visited) and (e[1][1] in nodes_visited)):
-            print (e[0], e[1][0].name, e[1][1].name)
             mst_distance += e[0]
-            nodes_visited.append(sorted(e[1][0].name, e[1][1].name))
             nodes_visited.append(e[1][1])
-            
+        if len(nodes_visited) == len(unvisited_cities):
+            break
     return mst_distance
             
             
