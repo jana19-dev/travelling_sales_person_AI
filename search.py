@@ -376,7 +376,7 @@ class SearchEngine:
         DEPTH = 1       # USED FOR IDA_STAR
         while not OPEN.empty():
             # BEAM SEARCH LIMITING THE OPEN QUEUE TO NUMBER OF CITIES ONLY
-            if self.strategy == _BEAM and len(OPEN.open) > len(initState.cities):
+            if self.strategy == _BEAM and len(OPEN.open) > len(initState.cities) * 2:
                 good_choices = []
                 for i in range(len(initState.cities)):
                     good_choices.append(OPEN.extract())

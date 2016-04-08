@@ -4,7 +4,7 @@ from copy import deepcopy
 import math
 import turtle
 import itertools
-
+from MinimumSpanningTree import MinimumSpanningTree
 
 '''
 a Node Class to represent a city
@@ -246,6 +246,7 @@ def MST(state):
     
     current_city = state.current_city
     unvisited_cities = state.get_unvisited()
+    
     city_pairs = itertools.combinations(unvisited_cities, 2)
     
     edges = []
@@ -253,19 +254,23 @@ def MST(state):
         edges.append((dist_Euclidean(x, y), (x,y)))
     edges = sorted(edges, key=lambda x: x[0])
     
-    nodes_visited = []
+    G = {}
+    for c in unvisited_cities:
+        G[c.name] = {}
+        
     for e in edges:
-        if not ((e[1][0] in nodes_visited) and (e[1][1] in nodes_visited)):
-            mst_distance += e[0]
-            nodes_visited.append(e[1][1])
-        if len(nodes_visited) >= len(unvisited_cities):
-            break
-    return mst_distance
+        city1 = e[1][0].name
+        city2 = e[1][1].name
+        edge = e[0]
+        G[city1][city2] = edge
+        G[city2][city1] = edge
+        
+    return MinimumSpanningTree(G)
             
             
 def dynamic_weight(state):
     '''Return the number of unvisited cities in the current state'''
-    return len(state.get_unvisited()) / len(state.cities)
+    return len(state.get_unvisited())
 
 
 
