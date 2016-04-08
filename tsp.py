@@ -106,7 +106,7 @@ class tsp(StateSpace):
 
 
     def get_unvisited(self):
-        return [city for city in self.cities if not city.is_visited]
+        return [city for city in self.cities if not city.is_visited and not city.is_start]
     
     
 #############################################
@@ -228,6 +228,8 @@ def dynamic_heur_MST_Manhattan(state):
     return dynamic_weight(state) * heur_MST_Manhattan(state)
 
 
+   
+    
 #############################################
 # Helper functions for heuristics           #
 #############################################
@@ -270,7 +272,7 @@ def MST(state):
             
 def dynamic_weight(state):
     '''Return the number of unvisited cities in the current state'''
-    return len(state.get_unvisited())
+    return len(state.get_unvisited()) + 1
 
 
 
