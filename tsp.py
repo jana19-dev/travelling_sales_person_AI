@@ -70,7 +70,7 @@ class tsp(StateSpace):
         self.cities = cities    # cities = [node1, node2, ... nodek]
         self.current_city = current_city
 
-    def successors(self):
+    def successors2(self):
         '''Return list of tsp objects that are the successors of the current object'''
         States = []
         current_city = self.current_city
@@ -93,7 +93,7 @@ class tsp(StateSpace):
             States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(start_city.name), new_gval, self))            
         return States        
 
-    def successors2(self):
+    def successors(self):
         '''Return list of tsp objects that are the BEST choices of successors of the current object'''
         States = []
         current_city = self.current_city        
@@ -239,6 +239,55 @@ def heur_Manhattan(state):
     else:
         return min(d1) + min(d2)
 
+def heur_Greedy(state):
+    '''Returns the estimated Euclidean distance to the closest node
+        to the current city + distance from that node to the start (goal)'''
+    current_city = state.current_city
+    closest_city = state.get_start()
+    min_distance = 9999999
+
+    for city in state.get_unvisited():
+        distance = dist_Euclidean(current_city, city)
+
+        if distance < min_distance:
+            min_distance = distance
+            closest_city = city
+
+    distance_to_start = dist_Euclidean(closest_city, state.get_start())
+    total_distance = min_distance + distance_to_start
+
+    return total_distance
+
+def heur_Greedy_Full(state):
+    '''computes entire greedy path for this state, returns the cost'''
+    current_city = state.current_city
+    temp_city = state.current_city
+    temp_distance = 9999999
+    total_distance = 0
+    next_city = state.get_start()
+    marked_cities = []
+
+    while (len(state.get_unvisited())>0):
+        for city in state.get_unvisited():
+            distance = dist_Euclidean(temp_city, city)
+
+            if distance < temp_distance:
+                temp_distance = distance
+                next_city = city
+
+        total_distance = total_distance + temp_distance
+        temp_distance = 9999999
+        current_city = next_city
+        next_city.is_visited = True
+        marked_cities.append(next_city)
+
+    last_distance = dist_Euclidean(current_city, state.get_start())
+    total_distance = total_distance + last_distance
+
+    for city in marked_cities:
+        city.is_visited = False
+
+    return total_distance/1
 
 def heur_MST_Euclidean(state):
     '''Estimated Euclidean distance to travel all the unvisited nodes
@@ -251,7 +300,11 @@ def heur_MST_Manhattan(state):
        starting from the current city + heur_Manhattan.'''
     return (MST(state, dist_Manhattan) + heur_Manhattan(state))
 
+def heur_MST_Greedy(state):
+    return (MST(state, dist_Euclidean) + heur_Greedy(state))
 
+def heur_MST_Greedy_Full(state):
+    return (MST(state, dist_Euclidean) + heur_Greedy_Full(state))
 
 def dynamic_heur_MST_Euclidean(state):
     return dynamic_weight(state) * heur_MST_Euclidean(state)
@@ -259,7 +312,11 @@ def dynamic_heur_MST_Euclidean(state):
 def dynamic_heur_MST_Manhattan(state):
     return dynamic_weight(state) * heur_MST_Manhattan(state)
 
+def dynamic_heur_Greedy(state):
+    return dynamic_weight(state) * heur_Greedy(state)
 
+def dynamic_heur_Greedy_Full(state):
+    return dynamic_weight(state) * heur_Greedy_Full(state)
    
     
 #############################################
