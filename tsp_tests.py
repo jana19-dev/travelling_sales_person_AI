@@ -196,20 +196,28 @@ if __name__ == '__main__':
         
     print("Now testing your heuristic:")
     heur_Manhattan_val = 304
+    heur_Manhattan_mst = 1343
     #check if within 1% of Euclidean value
     heur_Euclidean_val = 226.29184695874486
     if(heur_Manhattan(s5) == heur_Manhattan_val):
-        print("\t Manhattan distance heuristic  is correct.") 
+        print("\t Manhattan distance heuristic is correct.") 
     else:
         print("\t Manhattan distance heuristic wrong. Something's wrong with your heuristic.")
-        print("\t heur_Manhattan(s) should return %d" % heur_Manhattan_val)
+        print("\t heur_Manhattan(s5) should return %d" % heur_Manhattan_val)
         print("\t Your function returned %d" % heur_Manhattan(s5))
     if(heur_Euclidean(s5) < heur_Euclidean_val*(1.01) and heur_Euclidean(s5) > heur_Euclidean_val*(0.99)  ):
-        print("\t Euclidean distance heuristic  is correct.") 
+        print("\t Euclidean distance heuristic is correct.") 
     else:
         print("\t Euclidean distance heuristic wrong. Something's wrong with your heuristic.")
-        print("\t heur_Euclidean(s) should return %d" % heur_Euclidean_val)
+        print("\t heur_Euclidean(s5) should return %d" % heur_Euclidean_val)
         print("\t Your function returned %d" % heur_Euclidean(s5))
+    if(MST(s5, dist_Manhattan) == heur_Manhattan_mst):
+        print("\t MST heuristic function is correct.") 
+    else:
+        print("\t MST heuristic function wrong. Something's wrong with your heuristic.")
+        print("\t MST(s5, dist_Manhattan) should return %d" % heur_Manhattan_mst)
+        print("\t Your function returned %d" % MST(s5, dist_Manhattan))
+    
     
     print("Now testing your hash state test function:")
     
