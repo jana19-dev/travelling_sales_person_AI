@@ -6,6 +6,8 @@ import turtle
 import itertools
 from MinimumSpanningTree import MinimumSpanningTree
 from MinimumSpanningTree import MinimumSpanningCost
+from tsp_tests import *
+
 
 '''
 a Node Class to represent a city
@@ -492,3 +494,63 @@ def get_best_choices(state):
             break
         
     return good_sucessors
+
+
+if __name__ == "__main__":
+    #test_Greedy_BFS(state, heur_MST_Euclidean)
+    #test_Greedy_BFS(state, heur_MST_Manhattan)
+    #test_Greedy_BFS(state, heur_MST_Greedy)
+    #test_Greedy_BFS(state, heur_MST_Greedy_Full)
+    #test_Greedy_BFS(state, dynamic_heur_MST_Euclidean)
+    #test_Greedy_BFS(state, dynamic_heur_MST_Manhattan)
+    #test_Greedy_BFS(state, dynamic_heur_Greedy)
+    #test_Greedy_BFS(state, dynamic_heur_Greedy_Full)
+    
+    no_cities = 1
+    
+    algorithms = {1: 'depth_first',
+                  2: 'breadth_first',
+                  3: 'ucs',
+                  4: 'best_first',
+                  5: 'astar',
+                  6: 'ida*',
+                  7: 'beam'}
+    
+    heuristics = {1: 'heur_MST_Euclidean',
+                  2: 'heur_MST_Manhattan',
+                  3: 'heur_MST_Greedy',
+                  4: 'heur_MST_Greedy_Full',
+                  5: 'dynamic_heur_MST_Euclidean',
+                  6: 'dynamic_heur_MST_Manhattan',
+                  7: 'dynamic_heur_Greedy',
+                  8: 'dynamic_heur_Greedy_Full'}
+    
+    while no_cities:
+                      
+        try:
+            no_cities = int(input("Enter the number of cities: "))
+            state = make_rand_init_state(no_cities)
+            
+            print (algorithms)
+            strategy = int(input("\nChoose the algorithm to use: "))
+            
+            if strategy > 3:
+                print (heuristics)
+                heur_func = int(input("\nChoose the heuristic to use: "))
+                
+                se = SearchEngine(algorithms[strategy], cc_level = 'full')
+                final = se.search(state, tsp_goal_fn, eval(heuristics[heur_func]))
+                draw_final_path(final)     
+                
+            else:
+                se = SearchEngine(algorithms[strategy], cc_level = 'full')
+                final = se.search(state, tsp_goal_fn)
+                draw_final_path(final)               
+            
+            print ('________________________________________________________')
+            no_cities = int(input("\nInput 0 to exit, or any key to continue: "))
+            
+        except ValueError:
+            pass
+            
+        
