@@ -137,7 +137,7 @@ if __name__ == '__main__':
     
     
     
-    if(len(state.successors()) == 4):
+    if(len(s5.successors()) == 4):
         
         for i in range(0, 4):
         
@@ -146,7 +146,7 @@ if __name__ == '__main__':
             for c in cities:
                 city = (c.get_city_details()[0] , c.get_city_details()[1][0], c.get_city_details()[1][1])
                 unvisited.append(city)
-            c = state.successors()[i].current_city
+            c = s5.successors()[i].current_city
             current = (c.get_city_details()[0] , c.get_city_details()[1][0], c.get_city_details()[1][1])
             
             if (set(unvisited) == set(unvisited1) and
@@ -195,7 +195,23 @@ if __name__ == '__main__':
         print("\t ERROR: You have an incorrect number of states in your successor function.")
         print("\t We expect to have 4 states in s.successors().")
         print("\t Your function returned %d" % totalStates)
-    
+        
+    print("Now testing your heuristic:")
+    heur_Manhattan_val = 304
+    #check if within 1% of Euclidean value
+    heur_Euclidean_val = 226.29184695874486
+    if(heur_Manhattan(s5) == heur_Manhattan_val):
+        print("\t Manhattan distance heuristic  is correct.") 
+    else:
+        print("\t Manhattan distance heuristic wrong. Something's wrong with your heuristic.")
+        print("\t heur_Manhattan(s) should return %d" % heur_Manhattan_val)
+        print("\t Your function returned %d" % heur_Manhattan(s5))
+    if(heur_Euclidean(s5) < heur_Euclidean_val*(1.01) and heur_Euclidean(s5) > heur_Euclidean_val*(0.99)  ):
+        print("\t Euclidean distance heuristic  is correct.") 
+    else:
+        print("\t Euclidean distance heuristic wrong. Something's wrong with your heuristic.")
+        print("\t heur_Euclidean(s) should return %d" % heur_Euclidean_val)
+        print("\t Your function returned %d" % heur_Euclidean(s5))
     
     print("Now testing your goal state test function:")
     totalGoals = 0
