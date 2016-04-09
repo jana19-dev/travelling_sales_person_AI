@@ -6,7 +6,7 @@ import turtle
 import itertools
 from MinimumSpanningTree import MinimumSpanningTree
 from MinimumSpanningTree import MinimumSpanningCost
-from tsp_tests import *
+
 
 
 '''
