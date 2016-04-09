@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
 
 
-    #s5 = make_init_state(random_5)
+    s5 = make_init_state(random_5)
     #state = s5
     
     #s10 = make_init_state(random_10)
@@ -88,9 +88,164 @@ if __name__ == '__main__':
     #s100 = make_init_state(random_100)
     #state = s100
 
+    #test init_state using random_5
+    cities = s5.get_unvisited()
+    common_cities = 0
+    for r in random_5:
+        for c in cities:
+            city = (c.get_city_details()[0] , c.get_city_details()[1][0], c.get_city_details()[1][1])
+            if set(city) == set(r):
+                common_cities += 1
+    
+    c = s5.get_start()
+    start = (c.get_city_details()[0] , c.get_city_details()[1][0], c.get_city_details()[1][1])
+    if start in random_5:
+        common_cities += 1
+    
+    if common_cities == 5:
+        print ("Cities correctly initialized, make_init_state() function passed this test.")
+    else:
+        print ("ERROR: Something went wrong with your make_init_state() function." , )
+        print("\t Your method returned %d" % common_cities)
+    
+    #test successors
+    print("Now testing your successor state function:")
+    print("\t Testing successors of initial state. Should output 4 possible states.")
+    
+    state1 = False
+    state2 = False
+    state3 = False
+    state4 = False
+    totalStates = 0
+    
+    unvisited5 = list(random_5)
+    
+    if start in unvisited5:
+        unvisited5.remove(start)
+        
+    unvisited1 = list(unvisited5)
+    visited1 = unvisited1.pop(0)
+    
+    unvisited2 = list(unvisited5)
+    visited2 = unvisited2.pop(1)
+    
+    unvisited3 = list(unvisited5)
+    visited3 = unvisited3.pop(2)
+    
+    unvisited4 = list(unvisited5)
+    visited4 = unvisited4.pop(3)
+    
+    
+    
+    if(len(state.successors()) == 4):
+        
+        for i in range(0, 4):
+        
+            cities = s5.successors()[i].get_unvisited()
+            unvisited = []
+            for c in cities:
+                city = (c.get_city_details()[0] , c.get_city_details()[1][0], c.get_city_details()[1][1])
+                unvisited.append(city)
+            c = state.successors()[i].current_city
+            current = (c.get_city_details()[0] , c.get_city_details()[1][0], c.get_city_details()[1][1])
+            
+            if (set(unvisited) == set(unvisited1) and
+                set(current) == set(visited1) and
+                state1 == False):
+                    state1 = True
+                    totalStates += 1
+            elif (set(unvisited) == set(unvisited2) and
+                set(current) == set(visited2) and
+                state2 == False):
+                    state2 = True
+                    totalStates += 1
+            elif (set(unvisited) == set(unvisited3) and
+                set(current) == set(visited3) and
+                state3 == False):
+                    state3 = True
+                    totalStates += 1
+            elif (set(unvisited) == set(unvisited4) and
+                set(current) == set(visited4) and
+                state4 == False):
+                    state4 = True
+                    totalStates += 1
 
-
-
+        if(totalStates == 4):
+            print ("\t 4 out of 4 states were correct for the successor function.")
+        else:
+            print ("\t ERROR: Only %d out of 4 states were correct. Something's wrong with your successor function:" % totalStates)
+            if (state1 == False):
+                print("\t Missing state:")
+                print("\t unvisited:", unvisited1)
+                print("\t visited:", visited1)
+            if (state2 == False):
+                print("\t Missing state:")
+                print("\t unvisited:", unvisited2)
+                print("\t visited:", visited2)
+            if (state3 == False):
+                print("\t Missing state:")
+                print("\t unvisited:", unvisited3)
+                print("\t visited:", visited3)
+            if (state4 == False):
+                print("\t Missing state:")
+                print("\t unvisited:", unvisited4)
+                print("\t visited:", visited4)
+        
+    else:
+        print("\t ERROR: You have an incorrect number of states in your successor function.")
+        print("\t We expect to have 4 states in s.successors().")
+        print("\t Your function returned %d" % totalStates)
+    
+    
+    print("Now testing your goal state test function:")
+    totalGoals = 0
+    missedGoal1 = False
+    missedGoal2 = False
+    missedGoal3 = False
+    missedGoal4 = False
+    missedGoal5 = False
+    
+    if tsp_goal_fn(make_init_state(random_5)) is False:
+        totalGoals += 1
+    else:
+        missedGoal1 = True
+    if tsp_goal_fn(make_init_state(random_10)) is False:
+        totalGoals += 1
+    else:
+        missedGoal2 = True
+    if tsp_goal_fn(make_init_state(random_25)) is False:
+        totalGoals += 1
+    else:
+        missedGoal3 = True
+    if tsp_goal_fn(make_init_state(random_100)) is False:
+        totalGoals += 1
+    else:
+        missedGoal4 = True
+    if tsp_goal_fn(make_init_state([('2', 170, -147)])) is True:
+        totalGoals += 1
+    else:
+        missedGoal5 = True
+    
+    if totalGoals == 5:
+        print ("\t Your goal state test function returned the correct value for 5 out of 5 states.")
+    else:
+        print ("\t ERROR: Only %d out of 5 tested states were classified correctly by your goal function." % totalGoals)
+        if missedGoal1:
+            print(''' False positive with 5 cities
+            ''')
+        if missedGoal2:
+            print(''' False positive with 10 cities
+            ''')
+        if missedGoal3:
+            print(''' False positive with 25 cities
+            ''')
+        if missedGoal4:
+            print(''' False positive with 100 cities
+            ''')
+        if missedGoal5:
+            print(''' False negative with 1 city
+            ''')
+        
     #test_DFS(state)
 
     #test_BFS(state)
