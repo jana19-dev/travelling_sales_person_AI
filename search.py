@@ -343,7 +343,7 @@ class SearchEngine:
                 print("   Strategy = '{}, Depth Level = {}'".format(self.get_strategy(), LIMIT))
             else:
                 print("   Strategy = '{}'".format(self.get_strategy()))
-            print("   Solution cost = {}".format(goal_node.gval))
+            print("   Solution cost = {}".format(round(goal_node.gval)))
             #print("   Goal state: ", end="")
             #goal_node.state.print_state()
             #print("----------------------------")
@@ -378,7 +378,7 @@ class SearchEngine:
             # BEAM SEARCH LIMITING THE OPEN QUEUE TO NUMBER OF CITIES ONLY
             if self.strategy == _BEAM and len(OPEN.open) > len(initState.cities):
                 good_choices = []
-                for i in range(len(initState.cities)):
+                for i in range(int(len(OPEN.open) / 2)):
                     good_choices.append(OPEN.extract())
                 OPEN.clear()
                 for choice in good_choices:

@@ -38,7 +38,7 @@ def dist_Euclidean(node1, node2):
     xdiff = abs(x2 - x1)
     ydiff = abs(y2 - y1)
     
-    return int(math.sqrt(xdiff*xdiff + ydiff*ydiff))
+    return math.sqrt(xdiff*xdiff + ydiff*ydiff)
 
 
 def dist_Manhattan(node1, node2):
@@ -48,7 +48,7 @@ def dist_Manhattan(node1, node2):
     (x1,y1) = node1.position
     (x2,y2) = node2.position
     
-    return int(abs(x2-x1) + abs(y2-y1))
+    return abs(x2-x1) + abs(y2-y1)
 
 
 
@@ -243,13 +243,13 @@ def heur_Manhattan(state):
 def heur_MST_Euclidean(state):
     '''Estimated Euclidean distance to travel all the unvisited nodes
        starting from the current city + heur_Euclidean.'''
-    return (MST(state) + heur_Euclidean(state))
+    return (MST(state, dist_Euclidean) + heur_Euclidean(state))
 
 
 def heur_MST_Manhattan(state):
     '''Estimated Manhattan distance to travel all the unvisited nodes 
        starting from the current city + heur_Manhattan.'''
-    return (MST(state) + heur_Manhattan(state))
+    return (MST(state, dist_Manhattan) + heur_Manhattan(state))
 
 
 
@@ -266,7 +266,7 @@ def dynamic_heur_MST_Manhattan(state):
 # Helper functions for heuristics           #
 #############################################
 
-def MST(state):
+def MST(state, func):
     ''' Kruskal's algorithm.
         1. Sort the edges of G in ascending (non-decreasing) order
         2. Return mst_distance
@@ -278,7 +278,7 @@ def MST(state):
     
     edges = []
     for x,y in city_pairs:
-        edges.append((dist_Euclidean(x, y), (x,y)))
+        edges.append((func(x, y), (x,y)))
     edges = sorted(edges, key=lambda x: x[0])
     
     G = {}
@@ -431,7 +431,7 @@ def get_best_choices(state):
             good_sucessors.append(y)
         elif y == current_city:
             good_sucessors.append(x)
-        if len(good_sucessors) >= len(state.cities)/5:
+        if len(state.cities) > 5 and len(good_sucessors) >= len(state.cities)/5:
             break
         
     return good_sucessors
