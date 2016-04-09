@@ -5,6 +5,7 @@ import math
 import turtle
 import itertools
 from MinimumSpanningTree import MinimumSpanningTree
+from MinimumSpanningTree import MinimumSpanningCost
 
 '''
 a Node Class to represent a city
@@ -73,15 +74,49 @@ class tsp(StateSpace):
         '''Return list of tsp objects that are the successors of the current object'''
         States = []
         current_city = self.current_city
-        for city in self.cities:
-            if current_city != city and not city.is_visited:
-                new_gval = self.gval + dist_Euclidean(current_city, city)
-                new_cities = deepcopy(self.cities)
-                current_index = self.cities.index(city)
-                new_cities[current_index].is_visited = True
-                States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(city.name), new_gval, self))
+        unvisited_cities = self.get_unvisited()
+        
+        for city in unvisited_cities:
+            new_gval = self.gval + dist_Euclidean(current_city, city)
+            new_cities = deepcopy(self.cities)
+            current_index = self.cities.index(city)
+            new_cities[current_index].is_visited = True
+            States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(city.name), new_gval, self))
+            
+        if not unvisited_cities:
+            # move from currrent city back to start
+            start_city = self.get_start()
+            new_gval = self.gval + dist_Euclidean(current_city, start_city)
+            new_cities = deepcopy(self.cities)
+            current_index = self.cities.index(start_city)
+            new_cities[current_index].is_visited = True
+            States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(start_city.name), new_gval, self))            
         return States        
 
+    def successors2(self):
+        '''Return list of tsp objects that are the BEST choices of successors of the current object'''
+        States = []
+        current_city = self.current_city        
+        best_choices = [city for city in get_best_choices(self)]
+        
+        for city in best_choices:
+            new_gval = self.gval + dist_Euclidean(current_city, city)
+            new_cities = deepcopy(self.cities)
+            current_index = self.cities.index(city)
+            new_cities[current_index].is_visited = True
+            States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(city.name), new_gval, self))
+            
+        if not best_choices:
+            # move from currrent city back to start
+            start_city = self.get_start()
+            new_gval = self.gval + dist_Euclidean(current_city, start_city)
+            new_cities = deepcopy(self.cities)
+            current_index = self.cities.index(start_city)
+            new_cities[current_index].is_visited = True
+            States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(start_city.name), new_gval, self))            
+        return States       
+    
+    
     def hashable_state(self):
         '''Return a data item that can be used as a dictionary key to UNIQUELY represent the state.'''
         hash_list = []
@@ -106,9 +141,19 @@ class tsp(StateSpace):
 
 
     def get_unvisited(self):
-        return [city for city in self.cities if not city.is_visited and not city.is_start]
+        return [city for city in self.cities if not city.is_visited]
     
     
+    def get_start(self):
+        for city in self.cities:
+            if city.is_start:
+                return city
+
+    def get_city(self, name):
+        for city in self.cities:
+            if city.name == name:
+                return city
+
 #############################################
 # Goal Function and Initialization          #
 #############################################
@@ -146,6 +191,7 @@ def make_init_state(cities, start_city=1):
         i += 1
     
     current_city = all_cities[0]  # set the current city as the start_city
+    current_city.is_visited = True
     
     return tsp(current_city, all_cities, "START", 0)
     
@@ -166,14 +212,10 @@ def heur_Euclidean(state):
        The euclidean distance from that unvisited city back to the start city }
     '''
     current_city = state.current_city
-    d1 = [dist_Euclidean(current_city, city) for city in state.get_unvisited() if not city.is_start]
+    d1 = [dist_Euclidean(current_city, city) for city in state.get_unvisited()]
     
-    start_city = ''
-    for city in state.cities:
-        if city.is_start:
-            start_city = city
-            break
-    d2 = [dist_Euclidean(start_city, city) for city in state.get_unvisited() if not city.is_start]
+    start_city = state.get_start()
+    d2 = [dist_Euclidean(start_city, city) for city in state.get_unvisited()]
     
     if not d1 and not d2:
         return 0
@@ -187,14 +229,10 @@ def heur_Manhattan(state):
        The manhattan distance from that unvisited city to the start city }
     '''
     current_city = state.current_city
-    d1 = [dist_Manhattan(current_city, city) for city in state.get_unvisited() if not city.is_start]
+    d1 = [dist_Manhattan(current_city, city) for city in state.get_unvisited()]
     
-    start_city = ''
-    for city in state.cities:
-        if city.is_start:
-            start_city = city
-            break
-    d2 = [dist_Manhattan(start_city, city) for city in state.get_unvisited() if not city.is_start]
+    start_city = state.get_start()
+    d2 = [dist_Manhattan(start_city, city) for city in state.get_unvisited()]
     
     if not d1 and not d2:
         return 0
@@ -215,12 +253,6 @@ def heur_MST_Manhattan(state):
 
 
 
-def dynamic_heur_Euclidean(state):
-    return dynamic_weight(state) * heur_Euclidean(state)
-
-def dynamic_heur_Manhattan(state):
-    return dynamic_weight(state) * heur_Manhattan(state)
-
 def dynamic_heur_MST_Euclidean(state):
     return dynamic_weight(state) * heur_MST_Euclidean(state)
 
@@ -236,16 +268,9 @@ def dynamic_heur_MST_Manhattan(state):
 
 def MST(state):
     ''' Kruskal's algorithm.
-        1. mst_distance (the final spanning tree cost) is defined to be the 0
-        2. Sort the edges of G in ascending (non-decreasing) order
-        3. For each edge (u, v) from the sorted list of step 3.
-           If u and v belong to different sets
-               Add the cost of the edge to mst_distance
-               Get together u and v in one single set
-        4. Return mst_distance
+        1. Sort the edges of G in ascending (non-decreasing) order
+        2. Return mst_distance
     '''
-    mst_distance = 0
-    
     current_city = state.current_city
     unvisited_cities = state.get_unvisited()
     
@@ -267,7 +292,7 @@ def MST(state):
         G[city1][city2] = edge
         G[city2][city1] = edge
         
-    return MinimumSpanningTree(G)
+    return MinimumSpanningCost(G)
             
             
 def dynamic_weight(state):
@@ -388,3 +413,25 @@ def get_city_list(state):
 
 
 
+def get_best_choices(state):
+    current_city = state.current_city
+    unvisited_cities = state.get_unvisited()
+    unvisited_cities.insert(0, current_city)
+    city_pairs = itertools.combinations(unvisited_cities, 2)
+    
+    edges = []
+    for x,y in city_pairs:
+        edges.append((dist_Euclidean(x, y), (x,y)))
+    edges = sorted(edges, key=lambda x: x[0])
+       
+    good_sucessors = []    
+    for e in edges:
+        x,y = e[1]
+        if x == current_city:
+            good_sucessors.append(y)
+        elif y == current_city:
+            good_sucessors.append(x)
+        if len(good_sucessors) >= len(state.cities)/5:
+            break
+        
+    return good_sucessors
