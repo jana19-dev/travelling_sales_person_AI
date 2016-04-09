@@ -138,9 +138,7 @@ if __name__ == '__main__':
     
     
     if(len(s5.successors()) == 4):
-        
-        for i in range(0, 4):
-        
+        for i in range(0, 4):        
             cities = s5.successors()[i].get_unvisited()
             unvisited = []
             for c in cities:
@@ -212,6 +210,16 @@ if __name__ == '__main__':
         print("\t Euclidean distance heuristic wrong. Something's wrong with your heuristic.")
         print("\t heur_Euclidean(s) should return %d" % heur_Euclidean_val)
         print("\t Your function returned %d" % heur_Euclidean(s5))
+    
+    print("Now testing your hash state test function:")
+    
+    hash1 = s5.hashable_state()
+    hash2 = make_init_state([ ('1', -325, -216), ('2', 170, -147), ('3', 331, 64), ('4', 65, 307), ('5', 69, -96)]).hashable_state()
+    
+    if set(hash1) == set(hash2):
+        print("\t Hash function wrong.")
+    else:
+        print("\t Hash function correct.")
     
     print("Now testing your goal state test function:")
     totalGoals = 0
