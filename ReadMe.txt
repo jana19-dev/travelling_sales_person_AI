@@ -19,8 +19,8 @@ Step 3: Next, you get to choose the successor function. Since we developed 2 kin
         1: 'Normal Sucessors'
         2: 'Modified Successor'
 
-Step 4: Suppose in step 3, you chose an algorithm that requires an heuristic, you
-        will be prompted to choose one out of the 8 available.
+Step 4: Suppose in step 2, you chose an algorithm that require an heuristic, you
+        will be prompted to choose one out of the 8 available heuristics.
         1: 'heur_MST_Euclidean'
         2: 'heur_MST_Manhattan'
         3: 'heur_MST_Greedy'
@@ -30,12 +30,11 @@ Step 4: Suppose in step 3, you chose an algorithm that requires an heuristic, yo
         7: 'dynamic_heur_Greedy'
         8: 'dynamic_heur_Greedy_Full'
 
-        If you chose an algorithm that doesn't requires an heuristic, the search
+        If you chose an algorithm that doesn't require an heuristic, the search
         starts to compute the optimal path.
         
 Step 5: Once the search has completed, a GUI with the TSP path will be presented.
-
-Step 6: You will be prompted to either continue with another problem or exit.
+        You will be prompted to either continue with another problem or exit.
         Input 0 to exit, or any key to continue: 
         
-Step 7: Appreciate this cool interface and reward us :) :) :)
+Step 6: Appreciate this cool interface and reward us :) :) :)
