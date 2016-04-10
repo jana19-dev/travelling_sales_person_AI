@@ -8,7 +8,6 @@ from MinimumSpanningTree import MinimumSpanningTree
 from MinimumSpanningTree import MinimumSpanningCost
 
 
-
 '''
 a Node Class to represent a city
 '''
@@ -54,9 +53,8 @@ def dist_Manhattan(node1, node2):
 
 
 
-
 '''
-tsp STATESPACE
+TSP STATESPACE
 '''
 
 ##################################################
@@ -72,7 +70,7 @@ class tsp(StateSpace):
         self.cities = cities    # cities = [node1, node2, ... nodek]
         self.current_city = current_city
 
-    def successors2(self):
+    def successors(self):
         '''Return list of tsp objects that are the successors of the current object'''
         States = []
         current_city = self.current_city
@@ -95,7 +93,7 @@ class tsp(StateSpace):
             States.append(tsp(new_cities[current_index], new_cities, 'Move to {}'.format(start_city.name), new_gval, self))            
         return States        
 
-    def successors(self):
+    def successors2(self):
         '''Return list of tsp objects that are the BEST choices of successors of the current object'''
         States = []
         current_city = self.current_city        
@@ -145,16 +143,11 @@ class tsp(StateSpace):
     def get_unvisited(self):
         return [city for city in self.cities if not city.is_visited]
     
-    
     def get_start(self):
         for city in self.cities:
             if city.is_start:
                 return city
 
-    def get_city(self, name):
-        for city in self.cities:
-            if city.name == name:
-                return city
 
 #############################################
 # Goal Function and Initialization          #
@@ -164,7 +157,6 @@ class tsp(StateSpace):
 def tsp_goal_fn(state):
     '''Have we reached a goal state, such that we have visited all cities
        and back at the start city.'''
-    
     return not state.get_unvisited() and (state.current_city).is_start
 
 
@@ -241,72 +233,17 @@ def heur_Manhattan(state):
     else:
         return min(d1) + min(d2)
 
-def heur_Greedy(state):
-    '''Returns the estimated Euclidean distance to the closest node
-        to the current city + distance from that node to the start (goal)'''
-    current_city = state.current_city
-    closest_city = state.get_start()
-    min_distance = 9999999
 
-    for city in state.get_unvisited():
-        distance = dist_Euclidean(current_city, city)
-
-        if distance < min_distance:
-            min_distance = distance
-            closest_city = city
-
-    distance_to_start = dist_Euclidean(closest_city, state.get_start())
-    total_distance = min_distance + distance_to_start
-
-    return total_distance
-
-def heur_Greedy_Full(state):
-    '''computes entire greedy path for this state, returns the cost'''
-    current_city = state.current_city
-    temp_city = state.current_city
-    temp_distance = 9999999
-    total_distance = 0
-    next_city = state.get_start()
-    marked_cities = []
-
-    while (len(state.get_unvisited())>0):
-        for city in state.get_unvisited():
-            distance = dist_Euclidean(temp_city, city)
-
-            if distance < temp_distance:
-                temp_distance = distance
-                next_city = city
-
-        total_distance = total_distance + temp_distance
-        temp_distance = 9999999
-        current_city = next_city
-        next_city.is_visited = True
-        marked_cities.append(next_city)
-
-    last_distance = dist_Euclidean(current_city, state.get_start())
-    total_distance = total_distance + last_distance
-
-    for city in marked_cities:
-        city.is_visited = False
-
-    return total_distance/1
 
 def heur_MST_Euclidean(state):
     '''Estimated Euclidean distance to travel all the unvisited nodes
        starting from the current city + heur_Euclidean.'''
     return (MST(state, dist_Euclidean) + heur_Euclidean(state))
 
-
 def heur_MST_Manhattan(state):
     '''Estimated Manhattan distance to travel all the unvisited nodes 
        starting from the current city + heur_Manhattan.'''
     return (MST(state, dist_Manhattan) + heur_Manhattan(state))
-
-def heur_MST_Greedy(state):
-    return (MST(state, dist_Euclidean) + heur_Greedy(state))
-
-def heur_MST_Greedy_Full(state):
-    return (MST(state, dist_Euclidean) + heur_Greedy_Full(state))
 
 def dynamic_heur_MST_Euclidean(state):
     return dynamic_weight(state) * heur_MST_Euclidean(state)
@@ -314,11 +251,6 @@ def dynamic_heur_MST_Euclidean(state):
 def dynamic_heur_MST_Manhattan(state):
     return dynamic_weight(state) * heur_MST_Manhattan(state)
 
-def dynamic_heur_Greedy(state):
-    return dynamic_weight(state) * heur_Greedy(state)
-
-def dynamic_heur_Greedy_Full(state):
-    return dynamic_weight(state) * heur_Greedy_Full(state)
    
     
 #############################################
@@ -328,7 +260,7 @@ def dynamic_heur_Greedy_Full(state):
 def MST(state, func):
     ''' Kruskal's algorithm.
         1. Sort the edges of G in ascending (non-decreasing) order
-        2. Return mst_distance
+        2. Return the edge costs of the Minimum Spanning Tree
     '''
     current_city = state.current_city
     unvisited_cities = state.get_unvisited()
@@ -355,7 +287,14 @@ def MST(state, func):
             
             
 def dynamic_weight(state):
-    '''Return the number of unvisited cities in the current state'''
+    '''With dynamic weighting, you assume that at the beginning of your search, 
+       it's more important to get (anywhere) quickly; at the end of the search, 
+       it's more important to get to the goal. f(n) = g(n) + w(n) * h(n). 
+       There is a weight (w >= 1) associated with the heuristic. 
+       As you get closer to the goal, you decrease the weight; this decreases 
+       the importance of the heuristic, and increases the relative importance 
+       of the actual cost of the path.
+    '''
     return len(state.get_unvisited()) + 1
 
 
@@ -368,8 +307,7 @@ def dynamic_weight(state):
 
 def make_rand_init_state(n):
     '''Generate a random initial state containing 'n' number of cities'''
-    
-    # set the max width and height of the 2d space
+    # set the max width and height of the 2D space
     x_max = 420
     y_max = 380
     
@@ -398,6 +336,41 @@ def make_rand_init_state(n):
 
 
 
+def get_best_choices(state):
+    '''Sort all the edges in the state in increasing order and return the top
+       candidates for the successor
+    '''
+    current_city = state.current_city
+    unvisited_cities = state.get_unvisited()
+    unvisited_cities.insert(0, current_city)
+    city_pairs = itertools.combinations(unvisited_cities, 2)
+    
+    edges = []
+    for x,y in city_pairs:
+        edges.append((dist_Euclidean(x, y), (x,y)))
+    edges = sorted(edges, key=lambda x: x[0])
+       
+    good_sucessors = []    
+    for e in edges:
+        x,y = e[1]
+        if x == current_city:
+            good_sucessors.append(y)
+        elif y == current_city:
+            good_sucessors.append(x)
+        if len(state.cities) > 5 and len(good_sucessors) >= len(state.cities)/5:
+            break
+        
+    return good_sucessors
+
+
+
+
+########################################################
+#   Functions provided to draw the final output in GUI #
+#   Using python's inbuilt library turtle              #
+########################################################
+
+
 def draw_canvas(state):
     '''Draw all the cities in the current state in a canvas. Indicate the start
        city with a description and the current city by the turtle pointer head
@@ -420,8 +393,6 @@ def draw_canvas(state):
             turtle.write('{}'.format(city.name), align="center", font=("Arial", 12, "bold"))
  
     turtle.goto(current_city.position[0], current_city.position[1])
-    
-    
     
     
 def draw_final_path(state):
@@ -463,8 +434,11 @@ def draw_final_path(state):
     turtle.goto(cities[0].position[0], cities[0].position[1])    
 
 
+
 def get_city_list(state):
-    '''Return [(node1, x, y), (node2, x, y)...]'''
+    '''Helper function used in testing to visualize cities and thier properties
+       Return [(node1, x, y), (node2, x, y)...]
+    '''
     cities = []
     for city in state.cities:
         cities.append((city.name, city.position[0], city.position[1]))
@@ -472,39 +446,9 @@ def get_city_list(state):
 
 
 
-def get_best_choices(state):
-    current_city = state.current_city
-    unvisited_cities = state.get_unvisited()
-    unvisited_cities.insert(0, current_city)
-    city_pairs = itertools.combinations(unvisited_cities, 2)
-    
-    edges = []
-    for x,y in city_pairs:
-        edges.append((dist_Euclidean(x, y), (x,y)))
-    edges = sorted(edges, key=lambda x: x[0])
-       
-    good_sucessors = []    
-    for e in edges:
-        x,y = e[1]
-        if x == current_city:
-            good_sucessors.append(y)
-        elif y == current_city:
-            good_sucessors.append(x)
-        if len(state.cities) > 5 and len(good_sucessors) >= len(state.cities)/5:
-            break
-        
-    return good_sucessors
 
 
 if __name__ == "__main__":
-    #test_Greedy_BFS(state, heur_MST_Euclidean)
-    #test_Greedy_BFS(state, heur_MST_Manhattan)
-    #test_Greedy_BFS(state, heur_MST_Greedy)
-    #test_Greedy_BFS(state, heur_MST_Greedy_Full)
-    #test_Greedy_BFS(state, dynamic_heur_MST_Euclidean)
-    #test_Greedy_BFS(state, dynamic_heur_MST_Manhattan)
-    #test_Greedy_BFS(state, dynamic_heur_Greedy)
-    #test_Greedy_BFS(state, dynamic_heur_Greedy_Full)
     
     no_cities = 1
     
@@ -523,7 +467,11 @@ if __name__ == "__main__":
                   5: 'dynamic_heur_MST_Euclidean',
                   6: 'dynamic_heur_MST_Manhattan',
                   7: 'dynamic_heur_Greedy',
-                  8: 'dynamic_heur_Greedy_Full'}
+                  8: 'dynamic_heur_Greedy_Full',
+                  9: 'heur_zero'}
+    
+    successors = {1: 'Normal Sucessors',
+                  2: 'Modified Successor'}
     
     while no_cities:
                       
@@ -531,26 +479,39 @@ if __name__ == "__main__":
             no_cities = int(input("Enter the number of cities: "))
             state = make_rand_init_state(no_cities)
             
+            
             print (algorithms)
             strategy = int(input("\nChoose the algorithm to use: "))
+            while strategy not in [1,2,3,4,5,6,7]:
+                strategy = int(input("\nChoose the algorithm to use: "))
             
-            if strategy > 3:
+            print (successors)
+            s = int(input("\nChoose the successor function to use: "))
+            while s not in [1,2]:
+                s = int(input("\nChoose the successor function to use: "))            
+            
+            if strategy in [4, 5, 6, 7]:
                 print (heuristics)
                 heur_func = int(input("\nChoose the heuristic to use: "))
                 
+                while heur_func not in [1,2,3,4,5,6,7,8]:
+                    heur_func = int(input("\nChoose the heuristic to use: "))
+                
                 se = SearchEngine(algorithms[strategy], cc_level = 'full')
-                final = se.search(state, tsp_goal_fn, eval(heuristics[heur_func]))
+                final = se.search(state, tsp_goal_fn, s, eval(heuristics[heur_func]))
                 draw_final_path(final)     
                 
             else:
                 se = SearchEngine(algorithms[strategy], cc_level = 'full')
-                final = se.search(state, tsp_goal_fn)
-                draw_final_path(final)               
+                final = se.search(state, tsp_goal_fn, s, heur_zero)
+                draw_final_path(final)       
+
             
             print ('________________________________________________________')
             no_cities = int(input("\nInput 0 to exit, or any key to continue: "))
             
+            
         except ValueError:
             pass
             
-        
+    turtle.bye()

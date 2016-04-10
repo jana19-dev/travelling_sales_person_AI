@@ -5,7 +5,7 @@ def test_DFS(state):
     '''Depth first with full cycle checking'''
     se = SearchEngine(strategy = 'depth_first', cc_level = 'full')
     final = se.search(state, tsp_goal_fn)
-    #draw_final_path(final)
+    draw_final_path(final)
     print ('\n')
     
 
@@ -13,7 +13,7 @@ def test_BFS(state):
     '''Breadth first with full cycle checking'''
     se = SearchEngine(strategy = 'breadth_first', cc_level = 'full')
     final = se.search(state, tsp_goal_fn)
-    #draw_final_path(final)
+    draw_final_path(final)
     print ('\n')
 
 
@@ -21,7 +21,7 @@ def test_UCS(state):
     '''Uniform Cost with full cycle checking'''
     se = SearchEngine(strategy = 'ucs', cc_level = 'full')
     final = se.search(state, tsp_goal_fn)
-    #draw_final_path(final)
+    draw_final_path(final)
     print ('\n')
 
 
@@ -29,7 +29,7 @@ def test_Astar(state, heur_func=heur_zero):
     '''A* with full cycle checking'''
     se = SearchEngine(strategy = 'astar', cc_level = 'full')
     final = se.search(state, tsp_goal_fn, heur_func)
-    #draw_final_path(final)
+    draw_final_path(final)
     print ('\n')
 
 
@@ -37,7 +37,7 @@ def test_Greedy_BFS(state, heur_func=heur_zero):
     '''Greedy BFS with full cycle checking'''
     se = SearchEngine(strategy = 'best_first', cc_level = 'full')
     final = se.search(state, tsp_goal_fn, heur_func)
-    #draw_final_path(final)
+    draw_final_path(final)
     print ('\n')
     
     
@@ -45,7 +45,7 @@ def test_IDAstar(state, heur_func=heur_zero):
     '''IDA* with full cycle checking'''
     se = SearchEngine(strategy = 'ida*', cc_level = 'full')
     final = se.search(state, tsp_goal_fn, heur_func)
-    #draw_final_path(final)
+    draw_final_path(final)
     print ('\n')
 
 
@@ -53,7 +53,7 @@ def test_Beam(state, heur_func=heur_zero):
     '''Beam search with full cycle checking'''
     se = SearchEngine(strategy = 'beam', cc_level = 'full')
     final = se.search(state, tsp_goal_fn, heur_func)
-    #draw_final_path(final)
+    draw_final_path(final)
     print ('\n')
 
 
@@ -74,19 +74,11 @@ if __name__ == '__main__':
 
 
     s5 = make_init_state(random_5)
-    #state = s5
+    s10 = make_init_state(random_10)
+    s25 = make_init_state(random_25)
+    s50 = make_init_state(random_50)
+    s100 = make_init_state(random_100)
     
-    #s10 = make_init_state(random_10)
-    #state = s10
-    
-    #s25 = make_init_state(random_25)
-    #state = s25
-    
-    #s50 = make_init_state(random_50)
-    #state = s50
-    
-    #s100 = make_init_state(random_100)
-    #state = s100
 
     #test init_state using random_5
     cities = s5.get_unvisited()
@@ -278,6 +270,10 @@ if __name__ == '__main__':
             print(''' False negative with 1 city
             ''')
         
+        
+        
+    #state = s100
+    
     #test_DFS(state)
 
     #test_BFS(state)

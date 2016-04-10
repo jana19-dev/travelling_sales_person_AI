@@ -303,7 +303,7 @@ class SearchEngine:
 
         return rval
 
-    def search(self, initState, goal_fn, heur_fn = _zero_hfn, LIMIT=1):
+    def search(self, initState, goal_fn, ss, heur_fn=_zero_hfn, LIMIT=1):
         #Perform full cycle checking as follows
         #a. check state before inserting into OPEN. If we had already reached
         #   the same state via a cheaper path, don't insert into OPEN.
@@ -336,7 +336,7 @@ class SearchEngine:
         OPEN.insert(node)
 
     ###NOW do the search and return the result
-        goal_node = self.searchOpen(OPEN, goal_fn, heur_fn, LIMIT, initState)
+        goal_node = self.searchOpen(OPEN, goal_fn, heur_fn, ss, LIMIT, initState)
         if goal_node:
             print("Search Successful!")
             if self.strategy == _IDA_STAR:
@@ -356,14 +356,14 @@ class SearchEngine:
             if self.strategy == _IDA_STAR:
                 if LIMIT < len(initState.cities):
                     LIMIT += 1
-                    return self.search(initState, goal_fn, heur_fn, LIMIT)
+                    return self.search(initState, goal_fn, ss, heur_fn, LIMIT)
         #exited the while without finding goal---search failed
             print("Search Failed! (strategy '{}') No solution found".format(self.get_strategy()))
             self.total_search_time = os.times()[0] - self.total_search_time
             print("Search time = {}, nodes expanded = {}, states generated = {}, states cycle check pruned = {}".format(self.total_search_time,sNode.n, StateSpace.n, self.cycle_check_pruned))
             return False
 
-    def searchOpen(self, OPEN, goal_fn, heur_fn, LIMIT, initState):
+    def searchOpen(self, OPEN, goal_fn, heur_fn, ss, LIMIT, initState):
         '''Open has some nodes on it, now search from that state of OPEN'''
 
         #BEGIN TRACING
@@ -417,7 +417,10 @@ class SearchEngine:
             if self.strategy == _IDA_STAR and LIMIT == DEPTH:
                 pass
             else:
-                successors = node.state.successors()
+                if ss == 1:
+                    successors = node.state.successors()
+                else:
+                    successors = node.state.successors2()
 
                   
             DEPTH +=1
